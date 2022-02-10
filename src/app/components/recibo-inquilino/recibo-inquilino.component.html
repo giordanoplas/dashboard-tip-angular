@@ -1,0 +1,127 @@
+<div class="row">
+    <div class="col" *ngIf="inquilino != null">
+        <h3 class="text-primary mt-3 mb-3">{{inquilino.datos.inquilino}}</h3>
+        <h6 class="text-info mt-3"><b>Cliente:</b> {{inquilino.datos.cliente}}</h6>
+        <h6 class="text-danger"><b>Deuda total del mes:</b> {{datos.deudaTotal | numberWithCommas}}</h6>
+        <h6 class="text-danger" *ngIf="inquilino.cuentas != null"><b>Último pago:</b> {{inquilino.cuentas[0].pago | numberWithCommas}}</h6>
+        <h6 class="text-danger mb-3" *ngIf="inquilino.cuentas != null"><b>Fecha último pago:</b> {{datos.fecha_ultimo_pago | date: 'yyyy-MM-dd'}}</h6>
+        <h6 class="text-danger" *ngIf="inquilino.cuentas == null"><b>Pago:</b> N/A</h6>
+        <h6 class="text-danger mb-3" *ngIf="inquilino.cuentas == null"><b>Fecha último pago:</b> N/A</h6>
+        <form #reciboForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <input type="number" name="factura" placeholder="Factura:" class="form-control" #factura="ngModel"
+                    [(ngModel)]="facturaStr" (input)="onInputFactura($event)" required>
+                <small *ngIf="!factura.valid && factura.touched" class="text-danger">
+                    <b>Escribe una factura válida...</b>
+                </small>
+                <small *ngIf="facturaMsn != '' && factura.touched" class="text-danger">
+                    <b>{{facturaMsn}}</b>
+                </small>
+            </div>
+            <hr>
+            <div *ngIf="isFactura">
+                <div class="form-group">
+                    <input type="number" name="pago" placeholder="Pago:" class="form-control" #pago="ngModel"
+                        [(ngModel)]="datos.pago" required>
+                    <small *ngIf="!pago.valid && pago.touched" class="text-danger">
+                        <b>Escribe un pago válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="number" name="pago_adelantado" placeholder="Pago Adelantado:" class="form-control" #pago_adelantado="ngModel"
+                        [(ngModel)]="datos.pago_adelantado">
+                </div>                
+                <div class="form-group">
+                    <textarea name="detalle" placeholder="Detalle:" class="form-control" #detalle="ngModel"
+                        [(ngModel)]="datos.detalle" required></textarea>
+                    <small *ngIf="!detalle.valid && detalle.touched" class="text-danger">
+                        <b>Escribe un detalle válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="date" class="form-control" name="datePicker" #datePicker="ngModel"
+                        [(ngModel)]="datos.fecha">
+                </div>
+                <div class="custom-control custom-checkbox mb-2" *ngIf="inquilino.rnc != null">
+                    <input type="checkbox" id="rnc" class="custom-control-input" checked
+                        (change)="onPrintCheckedRNC($event)">
+                    <label for="rnc" class="custom-control-label">RNC</label>
+                </div>
+                <div class="custom-control custom-checkbox mb-2">
+                    <input type="checkbox" id="print_f" class="custom-control-input" (change)="onPrintChecked($event)">
+                    <label for="print_f" class="custom-control-label">Imprimir Recibo</label>
+                </div>
+                <button class="btn btn-primary mt-1 mb-5 w-100" type="submit"
+                    [disabled]="!reciboForm.valid || !isFactura" (click)="onClickPagoAdelantado()">Guardar</button>
+            </div> 
+        </form>
+    </div>
+</div>
+
+<div id="print_f_html" *ngIf="inquilino != null" class="d-none">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-between mb-2">
+            <div class="col-4"
+                *ngIf="inquilino != null && inquilino.datos.cliente_logotipo != null && inquilino.datos.cliente_logotipo.length > 0">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img [src]="_dataurl+'img/logotipos-clientes/'+inquilino.datos.cliente_logotipo"
+                            [alt]="'Logotipo Cliente'" width="200px" class="img img-fluid">
+                    </div>
+                    <div class="col-12">
+                        <p><b>{{inquilino.datos.cliente_direccion}}</b></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <img [src]="_ruta+'assets/images/logotipos/logo6.png'" [alt]="'logotipo'" width="200px"
+                    class="img img-fluid">
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-6 mr-3">
+                <p>
+                    <b>Cliente:</b> {{inquilino.datos.inquilino}} <br />
+                    <b>RNC:</b> {{datos.rnc}} <br />
+                    <b>NCF:</b> {{datos.ncf}}
+                </p>
+            </div>
+            <div class="col-auto">
+                <p>
+                    <b>Factura #:</b> {{datos.facturaN}} <br />
+                    <b>Fecha:</b> {{datos.fecha}}
+                </p>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group mt-4">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Detalle</th>
+                            <th>Pago</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{datos.detalle}}</td>
+                            <td>{{peso + ' ' + datos.pago | numberWithCommas}}</td>
+                        </tr>  
+                    </tbody>          
+                </table>
+            </div>        
+        </div>
+        <div class="row no-gutters items-group d-flex justify-content-between mt-4">
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>RECIBIDO POR</b></p>
+            </div>
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>ENTREGADO POR</b></p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+<div class="row view">
+    <div class="row d-flex justify-content-center informacion mx-1 mt-3">
+        <div class="col-12 text-center" *ngIf="cliente == null">
+            <h2 class="text-danger">No hay lugares que coincidan con tu búsqueda...</h2>
+        </div>
+        <div class="col-12 text-center" *ngIf="cliente == null">
+            <img [src]="_ruta+'assets/images/resources/loading.gif'" [alt]="'Cargando....'" width="300px"
+                class="img img-fluid">
+        </div>
+        <div class="col-12 text-center mb-5" *ngIf="cliente != null">
+            <div class="row">
+                <div class="col-12">
+                    <h1>{{cliente.cliente}}</h1>
+                    <button (click)="goFacturarCliente(cliente.data[0].clienteID)"
+                        class="btn btn-outline-primary">Facturar</button>
+                    <br>
+                    <button (click)="goReciboCliente(cliente.data[0].clienteID)"
+                        class="btn btn-outline-danger mt-1">Recibo</button>
+                </div>
+                <div class="col-12" *ngFor="let pd of cliente.pisosDivisiones; let i = index">
+                    <div class="row d-flex justify-content-center">
+                        <h5 class="text-secondary mt-3"
+                            *ngIf="setIndexArg(pd.lugar, i) == 0 && cliente.data[0].tipo_lugar != 'Plaza'">
+                            {{pd.lugar}}
+                        </h5>
+                        <div class="col-12">
+                            <h6 class="mt-2">Piso {{pd.piso}}:</h6>
+                        </div>
+                        <div class="p-2 division"
+                            *ngFor="let ran of createRange(pd.cant_divisiones); let index = index">
+                            <a style="cursor: pointer;" (click)="dataModal(getLugarDataInfo(pd.piso, ran), modal)"
+                                *ngIf="getLugarDataInfo(pd.piso, ran) != null &&
+                                            getLugarDataInfo(pd.piso, ran).deuda_pendiente > 0 &&
+                                            getLugarDataInfo(pd.piso, ran).pago == null">
+                                <fa-icon [icon]="faCircle" class="cuadrod m-2"></fa-icon>
+                            </a>
+                            <a style="cursor: pointer;" (click)="dataModal(getLugarDataInfo(pd.piso, ran), modal)"
+                                *ngIf="getLugarDataInfo(pd.piso, ran) != null &&
+                                            getLugarDataInfo(pd.piso, ran).deuda_pendiente == 0 &&
+                                            getLugarDataInfo(pd.piso, ran).deuda_total == 0">
+                                <fa-icon [icon]="faCircle" class="cuadrod m-2"></fa-icon>
+                            </a>
+                            <a style="cursor: pointer;" (click)="dataModal(getLugarDataInfo(pd.piso, ran), modal)"
+                                *ngIf="getLugarDataInfo(pd.piso, ran) != null &&
+                                            getLugarDataInfo(pd.piso, ran).deuda_pendiente > 0 &&
+                                            getLugarDataInfo(pd.piso, ran).pago != null &&
+                                            getLugarDataInfo(pd.piso, ran).pago < getLugarDataInfo(pd.piso, ran).deuda_total">
+                                <fa-icon [icon]="faCircle" class="cuadroi m-2"></fa-icon>
+                            </a>
+                            <a style="cursor: pointer;" (click)="dataModal(getLugarDataInfo(pd.piso, ran), modal)"
+                                *ngIf="getLugarDataInfo(pd.piso, ran) != null &&
+                                            getLugarDataInfo(pd.piso, ran).deuda_total > 0 &&
+                                            getLugarDataInfo(pd.piso, ran).deuda_pendiente == 0">
+                                <fa-icon [icon]="faCircle" class="cuadrond m-2"></fa-icon>
+                            </a>
+                            <span *ngIf="getLugarDataInfo(pd.piso, ran) == null">
+                                <fa-icon [icon]="faCircle" class="cuadrou m-2"></fa-icon>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ng-template #modal let-modal>
+                <div class="modal-header">
+                    <h3 class="card-title">{{data.cliente}}</h3>
+                    <button class="btn close" (click)="closeModal()" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <p><b>{{data.inquilino}}</b></p>
+                            <p class="card-text text-primary mt-1">
+                                <b>Piso: {{data.piso}}</b> |
+                                <b>Bloque: {{data.division}}</b>
+                                <br>
+                                <b>Descripción: {{data.descripcionIL}}</b>
+                            </p>
+                            <p class="card-text text-danger mt-1">
+                                <b>Deuda total: {{data.deuda_total | numberWithCommas}}</b>
+                                <br>
+                                <b>Deuda Pendiente: {{data.deuda_pendiente | numberWithCommas}}</b>
+                                <br *ngIf="data.pago != null">
+                                <b *ngIf="data.pago != null">Pago: {{data.pago | numberWithCommas}}</b>
+                                <br *ngIf="data.pago != null">
+                                <b *ngIf="data.pago != null">Pago adelantado: {{data.pago_adelantado}}</b>
+                                <br *ngIf="data.pago != null">
+                                <b *ngIf="data.pago != null">Fecha último pago: {{data.fecha_ultimo_pago | date:
+                                    'yyyy-MM-dd'}}</b>
+                                <br>
+                                <b>Periodo: {{data.periodo}}</b>
+                            </p>
+                            <button (click)="goFacturarInquilino(data.inquilinoID, data.piso, data.division)" class="btn btn-info btn-block btn-bg">Facturar</button>
+                            <button (click)="goReciboInquilino(data.inquilinoID, data.piso, data.division)" class="btn btn-success btn-block btn-bg">Recibo</button>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

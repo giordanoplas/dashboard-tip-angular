@@ -1,0 +1,140 @@
+<div class="row view">
+    <div class="col-12 mt-3" style="max-width: 450px;">
+        <form #buscarForm="ngForm" (onSubmit)="onBuscar()">
+            <div class="input-group">            
+                <input type="text" name="nombre" class="form-control" placeholder="Cliente:" #nombre="ngModel"
+                    [(ngModel)]="nombreSearch" (input)="onBuscar()">
+                <div class="input-group-append">
+                    <button class="btn btn-primary">
+                        <fa-icon [icon]="faSearch"></fa-icon>
+                    </button>                    
+                </div>            
+            </div>
+            <div class="input-group align-items-center mt-2">
+                <span class="cuadrod mx-2"></span> Deuda pendiente
+                <span class="cuadroi mx-2"></span> Pago incompleto
+                <span class="cuadrond mx-2"></span> No deuda
+                <span class="cuadrou mx-2"></span> Espacio vacío
+            </div>
+        </form>
+    </div>
+    <div class="row d-flex justify-content-center informacion mx-1 mt-3">   
+        <div class="col-12 text-center" *ngIf="clientesP == null && dataSearchEmpty">
+            <h2 class="text-danger">No hay lugares que coincidan con tu búsqueda...</h2>
+        </div>
+        <div class="col-12 text-center" *ngIf="clientesP == null && !dataSearchEmpty">
+            <img [src]="_ruta+'assets/images/resources/loading.gif'" [alt]="'Cargando....'" width="300px" class="img img-fluid">            
+        </div>    
+        <div class="col-12 text-center" *ngIf="clientesP != null && clientesP.length == 0">
+            <h2 class="text-danger">No hay lugares a mostrar...</h2>
+        </div>                
+        <div class="col-12" *ngIf="clientesP != null && clientesP.length > 0">
+            <div class="card-columns">             
+                <div class="card" *ngFor="let cc of cxc">                   
+                    <div class="card-body">                        
+                        <a [routerLink]="['/cxc/single', cc.data[0].clienteID]" class="btn btn-link btn-block p-0" id="cliente">{{cc.cliente}}</a>
+                        <button (click)="goFacturarCliente(cc.data[0].clienteID)" class="btn btn-outline-primary btn-block btn-sm">Facturar</button>
+                        <button (click)="goReciboCliente(cc.data[0].clienteID)" class="btn btn-outline-danger btn-block btn-sm">Recibo</button>
+                        <hr class="mb-0">              
+                        <div *ngFor="let pd of cc.pisosDivisiones; let i = index">                            
+                            <h5 class="card-title text-secondary mt-3" *ngIf="setIndexArg(pd.lugar, i)==0 && cc.data[0].tipo_lugar != 'Plaza'">{{pd.lugar}}</h5>
+                            <h6 class="mt-2">Piso {{pd.piso}}:</h6>
+                            <div class="row">
+                                <div class="col d-flex justify-content-center p-2 division" *ngFor="let ran of createRange(pd.cant_divisiones); let index = index">
+                                    <a style="cursor: pointer;" (click)="dataModal(getLugarDataInfo(pd.clienteID, pd.piso, ran), modal)" 
+                                        *ngIf="getLugarDataInfo(pd.clienteID, pd.piso, ran) != null &&
+                                            getLugarDataInfo(pd.clienteID, pd.piso, ran).deuda_pendiente > 0 &&
+                                            getLugarDataInfo(pd.clienteID, pd.piso, ran).pago == null">
+                                        <fa-icon [icon]="faCircle" class="cuadrod m-2"></fa-icon>
+                                    </a>
+                                    <a style="cursor: pointer;" (click)="dataModal(getLugarDataInfo(pd.clienteID, pd.piso, ran), modal)" 
+                                        *ngIf="getLugarDataInfo(pd.clienteID, pd.piso, ran) != null &&
+                                            getLugarDataInfo(pd.clienteID, pd.piso, ran).deuda_pendiente == 0 &&
+                                            getLugarDataInfo(pd.clienteID, pd.piso, ran).deuda_total == 0">
+                                        <fa-icon [icon]="faCircle" class="cuadrod m-2"></fa-icon>
+                                    </a>
+                                    <a style="cursor: pointer;" (click)="dataModal(getLugarDataInfo(pd.clienteID, pd.piso, ran), modal)" 
+                                        *ngIf="getLugarDataInfo(pd.clienteID, pd.piso, ran) != null &&
+                                            getLugarDataInfo(pd.clienteID, pd.piso, ran).deuda_pendiente > 0 &&
+                                            getLugarDataInfo(pd.clienteID, pd.piso, ran).pago != null &&
+                                            getLugarDataInfo(pd.clienteID, pd.piso, ran).pago < getLugarDataInfo(pd.clienteID, pd.piso, ran).deuda_total">
+                                        <fa-icon [icon]="faCircle" class="cuadroi m-2"></fa-icon>
+                                    </a>
+                                    <a style="cursor: pointer;" (click)="dataModal(getLugarDataInfo(pd.clienteID, pd.piso, ran), modal)" 
+                                        *ngIf="getLugarDataInfo(pd.clienteID, pd.piso, ran) != null &&
+                                            getLugarDataInfo(pd.clienteID, pd.piso, ran).deuda_total > 0 &&
+                                            getLugarDataInfo(pd.clienteID, pd.piso, ran).deuda_pendiente == 0">
+                                        <fa-icon [icon]="faCircle" class="cuadrond m-2"></fa-icon>
+                                    </a>
+                                    <span *ngIf="getLugarDataInfo(pd.clienteID, pd.piso, ran) == null">
+                                        <fa-icon [icon]="faCircle" class="cuadrou m-2"></fa-icon>
+                                    </span>                                 
+                                </div>                                
+                            </div>                    
+                        </div>
+                        <ng-template #modal let-modal>
+                            <div class="modal-header">
+                                <h3 class="card-title">{{data.cliente}}</h3>
+                                <button class="btn close" (click)="closeModal()" aria-label="Cerrar">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p><b>{{data.inquilino}}</b></p>
+                                        <p class="card-text text-primary mt-1">
+                                            <b>Piso: {{data.piso}}</b> | 
+                                            <b>Bloque: {{data.division}}</b>
+                                            <br>
+                                            <b>Descripción: {{data.descripcionIL}}</b>
+                                        </p>
+                                        <p class="card-text text-danger mt-1">
+                                            <b>Deuda total: {{data.deuda_total | numberWithCommas}}</b>
+                                            <br>
+                                            <b>Deuda Pendiente: {{data.deuda_pendiente | numberWithCommas}}</b>
+                                            <br *ngIf="data.pago != null">
+                                            <b *ngIf="data.pago != null">Pago: {{data.pago | numberWithCommas}}</b>
+                                            <br *ngIf="data.pago != null">
+                                            <b *ngIf="data.pago != null">Pago adelantado: {{data.pago_adelantado}}</b>
+                                            <br *ngIf="data.pago != null">
+                                            <b *ngIf="data.pago != null">Fecha último pago: {{data.fecha_ultimo_pago | date: 'yyyy-MM-dd'}}</b>
+                                        </p>
+                                        <button (click)="goFacturarInquilino(data.inquilinoID, data.piso, data.division)" class="btn btn-info btn-block btn-bg">Facturar</button>
+                                        <button (click)="goReciboInquilino(data.inquilinoID, data.piso, data.division)" class="btn btn-success btn-block btn-bg">Recibo</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>                       
+                    </div>
+                </div>                                       
+            </div>
+            <div class="col-12 d-flex justify-content-center mt-3" *ngIf="!isSearch">
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item" [ngClass]="{'disabled': paginaActual == 1}">
+                            <span class="page-link" *ngIf="paginaActual == 1">
+                                <fa-icon [icon]="faAngleDoubleLeft"></fa-icon>
+                            </span>
+                            <a class="page-link" (click)="link(prevPage())" *ngIf="paginaActual != 1" style="cursor: pointer;">
+                                <fa-icon [icon]="faAngleDoubleLeft"></fa-icon>
+                            </a>
+                        </li>
+                        <li class="page-item" *ngFor="let np of createRange(totalPaginas)" [ngClass]="{'active': paginaActual == np}">
+                            <span class="page-link" *ngIf="paginaActual == np">{{np}}</span>
+                            <a (click)="link(np)" class="page-link" *ngIf="paginaActual != np" style="cursor: pointer;">{{np}}</a>
+                        </li>   
+                        <li class="page-item" [ngClass]="{'disabled': paginaActual == totalPaginas}">
+                            <span class="page-link" *ngIf="paginaActual == totalPaginas">
+                                <fa-icon [icon]="faAngleDoubleRight"></fa-icon>
+                            </span>
+                            <a class="page-link" (click)="link(nextPage())" *ngIf="paginaActual != totalPaginas" style="cursor: pointer;">
+                                <fa-icon [icon]="faAngleDoubleRight"></fa-icon>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>

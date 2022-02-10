@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col">
+        <h3 class="text-primary mt-3 mb-3">Modificar Lugar</h3>
+        <form #addForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group mt-3">
+                <label for="lugares">Buscar lugar:</label>
+                <input type="text" class="form-control" placeholder="Lugar:" [(ngModel)]="lugar"
+                    [ngbTypeahead]="searchLugar" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' required (change)="setDatos()" />
+            </div>
+            <hr>
+            <div *ngIf="lugar != null && lugar.id > 0">
+                <div class="form-group">
+                    <input type="text" name="nombre" placeholder="Nombre:" class="form-control" #nombre="ngModel"
+                        [(ngModel)]="datos.nombre" required>
+                    <small *ngIf="!nombre.valid && nombre.touched" class="text-danger">
+                        <b>Escribe un nombre válido...</b>
+                    </small>
+                </div>
+                <div class="form-group" *ngIf="lugarTipos != null">
+                    <select name="tipo" class="form-control" #tipo="ngModel" [(ngModel)]="datos.lugarTipoID">
+                        <option value="0">Selecciona un tipo</option>
+                        <option *ngFor="let data of lugarTipos" [value]="data.id">{{data.nombre}}</option>
+                    </select>
+                    <small *ngIf="datos.lugarTipoID == 0" class="text-danger">
+                        <b>Debes seleccionar un tipo de lugar...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="cantPisos"><b>Cantidad de pisos:</b></label>
+                    <input type="number" name="cantPisos" placeholder="Cantidad Pisos:" class="form-control"
+                        #cantPisos="ngModel" [(ngModel)]="datos.cantPisos">
+                </div>
+                <div class="form-group">
+                    <textarea name="descripcion" placeholder="Descripción:" class="form-control" #descripcion="ngModel"
+                        [(ngModel)]="datos.descripcion"></textarea>
+                </div>
+
+                <button class="btn btn-success mt-1 mb-5 w-100" type="submit"
+                    [disabled]="!addForm.valid || datos.lugarTipoID == 0">Modificar</button>
+            </div>
+        </form>
+    </div>
+</div>

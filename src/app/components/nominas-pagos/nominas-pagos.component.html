@@ -1,0 +1,114 @@
+<div class="row">
+    <div class="col">
+        <h3 class="text-primary mt-3 mb-3">Pago Empleado</h3>
+        <form #addForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group mt-3">
+                <label for="empleados">Buscar Empleado:</label>
+                <input type="text" class="form-control" placeholder="Empleado:" [(ngModel)]="empleado"
+                    [ngbTypeahead]="searchEmpleado" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' required (change)="getClienteEmpleado()" />
+            </div>
+            <hr>
+            <div *ngIf="empleado != null && empleado.id > 0">
+                <div class="form-group">
+                    <input type="number" name="pago" placeholder="Pago:" class="form-control" #pago="ngModel"
+                        [(ngModel)]="datos.pago" required (input)="onInputPagos()">
+                    <small *ngIf="!pago.valid && pago.touched" class="text-danger">
+                        <b>Escribe un pago válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="number" name="tss" placeholder="TSS:" class="form-control" #tss="ngModel"
+                        [(ngModel)]="datos.tss" required (input)="onInputPagos()">
+                </div>
+                <div class="form-group">
+                    <textarea name="detalle" placeholder="Detalle:" class="form-control" #detalle="ngModel"
+                        [(ngModel)]="datos.detalle" required></textarea>
+                    <small *ngIf="!detalle.valid && detalle.touched" class="text-danger">
+                        <b>Escribe un detalle válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="date" class="form-control" name="datePicker" #datePicker="ngModel"
+                        [(ngModel)]="datos.fecha">
+                </div>
+                <div class="custom-control custom-checkbox mb-2">
+                    <input type="checkbox" id="print_f" class="custom-control-input" (change)="onPrintChecked($event)">
+                    <label for="print_f" class="custom-control-label">Imprimir Recibo</label>
+                </div>
+                <hr>
+                <button class="btn btn-primary mt-1 mb-5 w-100" type="submit" 
+                    [disabled]="!addForm.valid">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="print_f_html" *ngIf="cliente != null" class="d-none">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-between mb-2">
+            <div class="col-4" *ngIf="cliente != null && cliente.logotipo != null && cliente.logotipo.length > 0">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img [src]="_dataurl+'img/logotipos-clientes/'+cliente.logotipo" [alt]="'Logotipo Cliente'"
+                            width="200px" class="img img-fluid">
+                    </div>
+                    <div class="col-12">
+                        <p><b>{{cliente.direccion}}</b></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <img [src]="_ruta+'assets/images/logotipos/logo6.png'" [alt]="'logotipo'" width="200px"
+                    class="img img-fluid">
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-6 mr-3">
+                <p>
+                    <b>Empleado:</b> {{empleado.nombre}}
+                </p>
+            </div>
+            <div class="col-auto">
+                <p>
+                    <b>Fecha:</b> {{datos.fecha}}
+                </p>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group mt-4">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Detalle</th>
+                            <th>Pago</th>
+                            <th>TSS</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{datos.detalle}}</td>
+                            <td>{{datos.pago | numberWithCommas}}</td>
+                            <td>{{datos.tss | numberWithCommas}}</td>
+                            <td>{{datos.total | numberWithCommas}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between mt-4">
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>RECIBIDO POR</b></p>
+            </div>
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>ENTREGADO POR</b></p>
+            </div>
+        </div>
+    </div>
+</div>

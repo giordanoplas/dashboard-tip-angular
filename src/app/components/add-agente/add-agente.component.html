@@ -1,0 +1,75 @@
+<h3 class="text-primary mt-3 mb-3">Agregar agente</h3>
+<form #addForm="ngForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <input type="text" name="nombre" placeholder="Nombre:" class="form-control" #nombre="ngModel"
+            [(ngModel)]="agente.nombre" required>
+        <small *ngIf="!nombre.valid && nombre.touched" class="text-danger">
+            <b>Escribe un nombre válido...</b>
+        </small>
+    </div>
+    <div class="form-group">
+        <input type="text" name="titulo" placeholder="Título:" class="form-control" #titulo="ngModel"
+            [(ngModel)]="agente.titulo">
+    </div>
+    <div class="form-group">
+        <input type="email" name="email" placeholder="Email:" class="form-control" #email="ngModel"
+            [(ngModel)]="agente.email">
+    </div>
+    <label>Sexo:</label>
+    <div class="mb-2">
+        <div class="form-check">
+            <label class="form-check-label">
+                <input type="radio" name="sexo" id="1" autocomplete="off" class="form-check-input mr-2"
+                    [value]="'M'" checked (change)="onChange($event)">Hombre
+            </label>                        
+        </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input type="radio" name="sexo" id="2" autocomplete="off" class="form-check-input mr-2"
+                    [value]="'F'" (change)="onChange($event)">Mujer
+            </label>  
+        </div>      
+    </div>    
+    <div class="form-group">
+        <input type="tel" name="telefono1" placeholder="Teléfono1:" class="form-control" #telefono1="ngModel"
+            [(ngModel)]="agente.telefono1">
+    </div>
+    <div class="form-group">
+        <input type="tel" name="telefono2" placeholder="Teléfono2:" class="form-control" #telefono2="ngModel"
+            [(ngModel)]="agente.telefono2">
+    </div>
+    <div class="form-group">
+        <input type="tel" name="telefono3" placeholder="Teléfono3:" class="form-control" #telefono3="ngModel"
+            [(ngModel)]="agente.telefono3">
+    </div>
+    <div class="form-group">
+        <textarea name="descripcion" placeholder="Descripción:" class="form-control" #descripcion="ngModel"
+            [(ngModel)]="agente.descripcion"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="pl">Pro Listadas:</label>
+        <input type="number" name="pl" placeholder="Pro listadas:" class="form-control" #pl="ngModel"
+            [(ngModel)]="agente.pl">
+    </div>
+    <div class="form-group">
+        <input type="text" name="facebook" placeholder="Facebook:" class="form-control" #facebook="ngModel"
+            [(ngModel)]="agente.facebook">
+    </div>
+    <div class="form-group">
+        <input type="text" name="twitter" placeholder="Twitter:" class="form-control" #twitter="ngModel"
+            [(ngModel)]="agente.twitter">
+    </div>
+    <div class="form-group">
+        <input type="text" name="instagram" placeholder="Instagram:" class="form-control" #instagram="ngModel"
+            [(ngModel)]="agente.instagram">
+    </div>
+    <hr>
+    <h5>Thumb:</h5>
+    <angular-file-uploader [config]="afuConfig" (ApiResponse)="upload($event)">
+    </angular-file-uploader>
+    <hr>
+
+    <button class="btn btn-primary mt-2 mb-5 w-100" type="submit" 
+        [disabled]="!addForm.valid">Guardar</button>  
+</form>
+

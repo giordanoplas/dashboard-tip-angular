@@ -1,0 +1,49 @@
+<div class="row view">
+    <div class="col-12 mt-3" style="max-width: 450px;">
+        <form #buscarForm="ngForm" (ngSubmit)="search()">
+            <div class="input-group">            
+                <input type="text" name="nombre" class="form-control" placeholder="Nombre agente" #nombre="ngModel"
+                    [(ngModel)]="nombreSearch">
+                <div class="input-group-append">
+                    <button class="btn btn-primary">Buscar</button>
+                </div>            
+            </div>
+        </form>
+    </div>
+    <div class="row d-flex justify-content-center informacion mx-1 mt-3">   
+        <div class="col-12 text-center" *ngIf="agentes == null && dataSearchEmpty">
+            <h2 class="text-danger">No hay propiedades que coincidan con tu búsqueda...</h2>
+        </div>
+        <div class="col-12 text-center" *ngIf="agentes == null && !dataSearchEmpty">
+            <img [src]="_ruta+'assets/images/resources/loading.gif'" [alt]="'Cargando....'" width="300px" class="img img-fluid">            
+        </div>    
+        <div class="col-12 text-center" *ngIf="agentes != null && agentes.length == 0">
+            <h2 class="text-danger">No hay propiedades a mostrar...</h2>
+        </div>                
+        <div class="col-auto" *ngIf="agentes != null && agentes.length > 0">
+            <div class="card-columns">
+                <div class="card" style="max-width: 20rem;" *ngFor="let agente of agentes">
+                    <img [src]="_data+'img/'+agente.thumb" class="card-img-top img-fluid" [alt]="agente.nombre" *ngIf="agente.thumb != null && agente.thumb.length > 0">
+                    <img [src]="_ruta+'assets/images/resources/noimagen.png'" class="card-img-top img-fluid" [alt]="'No imagen'" *ngIf="agente.thumb == null || agente.thumb.length == 0">
+                    <div class="card-body">
+                        <h3 class="card-title">{{agente.nombre}}</h3>
+                        <p class="m-0"><b>Título:</b> {{agente.titulo}}</p>
+                        <p class="m-0"><b>Email:</b> {{agente.email}}</p>
+                        <p class="m-0"><b>Teléfono1:</b> {{agente.telefono1}}</p>
+                        <p class="m-0"><b>Teléfono2:</b> {{agente.telefono2}}</p>
+                        <p class="m-0"><b>Teléfono3:</b> {{agente.telefono3}}</p>
+                        <p class="m-0"><b>Descripción:</b> {{agente.descripcion}}</p>
+                        <p class="m-0"><b>Pro List:</b> {{agente.pl}}</p>
+                        <p class="m-0"><b>Facebook:</b> {{agente.facebook}}</p>
+                        <p class="m-0"><b>Twitter:</b> {{agente.twitter}}</p>
+                        <p class="m-0"><b>Instagram:</b> {{agente.instagram}}</p>                        
+                    </div>
+                    <div class="card-footer">
+                        <a (click)="goEditar(agente.id)" class="btn btn-primary">Editar</a>
+                        <button (click)="delete(agente.id)" class="btn btn-danger ml-1">Eliminar</button>
+                    </div>
+                </div>                        
+            </div>
+        </div>
+    </div>
+</div>

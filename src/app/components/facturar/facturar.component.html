@@ -1,0 +1,143 @@
+<div class="row">
+    <div class="col" *ngIf="inquilino != null && inquilino.datos != null">
+        <h3 class="text-primary mt-3 mb-3">{{inquilino.datos[0].inquilino}}</h3>
+        <h6 class="text-info mt-3"><b>Cliente:</b> {{inquilino.datos[0].cliente}}</h6>
+        <h6 class="text-info"><b>Lugar:</b> {{inquilino.datos[0].lugar + ' - ' + inquilino.datos[0].metros_cuadrados + ' M²'}}</h6>
+        <form #facturarForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <select name="pisoDivision" class="custom-select custom-select" #pisoDivision="ngModel"
+                    [(ngModel)]="datos.pisoDivision" (change)="onSelectMC()">
+                    <option *ngFor="let x of inquilino.datos" [value]="'piso: '+x.piso+', division: '+x.division">
+                        {{x.descripcion_lugar}}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="number" name="precio" placeholder="Precio M²:" class="form-control" #precio="ngModel"
+                    [(ngModel)]="datos.precio" required (input)="onInputPrecio($event)">
+                <small *ngIf="!precio.valid && precio.touched" class="text-danger">
+                    <b>Escribe un precio válido...</b>
+                </small>
+            </div>
+            <div class="form-group">
+                <textarea name="detalle" placeholder="Detalle:" class="form-control" #detalle="ngModel"
+                    [(ngModel)]="datos.detalle" required></textarea>
+                <small *ngIf="!detalle.valid && detalle.touched" class="text-danger">
+                    <b>Escribe un detalle válido...</b>
+                </small>
+            </div>
+            <div class="form-group">
+                <textarea name="nota" placeholder="Nota:" class="form-control" #nota="ngModel"
+                    [(ngModel)]="datos.nota"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="date" class="form-control" name="datePicker" #datePicker="ngModel"
+                    [(ngModel)]="datos.fecha">
+            </div>
+            <div class="custom-control custom-checkbox mb-2" *ngIf="inquilino.datos[0].rnc != null">
+                <input type="checkbox" id="rnc" class="custom-control-input" checked
+                    (change)="onPrintCheckedRNC($event)">
+                <label for="rnc" class="custom-control-label">RNC</label>
+            </div>
+            <div class="custom-control custom-checkbox mb-2">
+                <input type="checkbox" id="print_f" class="custom-control-input" (change)="onPrintChecked($event)">
+                <label for="print_f" class="custom-control-label">Imprimir Factura</label>
+            </div>
+
+            <button class="btn btn-primary mt-1 mb-5 w-100" type="submit" [disabled]="!facturarForm.valid"
+                (click)="onClick()">Guardar</button>
+        </form>
+    </div>
+</div>
+
+<div id="print_f_html" *ngIf="inquilino != null && inquilino.datos != null" class="d-none">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-between">
+            <div class="col-4"
+                *ngIf="inquilino.datos[0].cliente_logotipo != null && inquilino.datos[0].cliente_logotipo.length > 0">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img [src]="_dataurl+'img/logotipos-clientes/'+inquilino.datos[0].cliente_logotipo"
+                            [alt]="'Logotipo Cliente'" width="200px" class="img img-fluid">
+                    </div>
+                    <div class="col-12">
+                        <p><b>{{inquilino.datos[0].cliente_direccion}}</b></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <img [src]="_ruta+'assets/images/logotipos/logo6.png'" [alt]="'logotipo'" width="200px"
+                    class="img img-fluid">
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-6 mr-3">
+                <p>
+                    <b>Cliente:</b> {{inquilino.datos[0].inquilino}} <br />
+                    <b>Lugar:</b> {{inquilino.datos[0].lugar}} <br />
+                    <b>RNC:</b> {{datos.rnc}} <br />
+                    <b>NCF:</b> {{datos.ncf}} <br />
+                    <b>Detalle:</b> {{datos.detalle}}
+                </p>
+            </div>
+            <div class="col-auto">
+                <p>
+                    <b>Factura #:</b> {{datos.numero}} <br />
+                    <b>Fecha:</b> {{datos.fecha}} <br />
+                    <b>Válida Hasta:</b> {{datos.vh}}
+                </p>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group mt-4">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Módulo</th>
+                            <th>SP/SE</th>
+                            <th>Precio por M²</th>
+                            <th>M²</th>
+                            <th>SUB-TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of dataTable">
+                            <td>{{data.modulo}}</td>
+                            <td>{{data.sp_se}}</td>
+                            <td>{{peso + ' ' + data.precio | numberWithCommas}}</td>
+                            <td>{{data.metrosCuadrados}}</td>
+                            <td>{{peso + ' ' + data.subtotal | numberWithCommas}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-4 text-left">
+                <p>
+                    <b>Nota:</b> {{datos.nota}}
+                </p>
+            </div>
+            <div class="col-auto text-left">
+                <p>
+                    <b>TOTAL EXENTO: </b> {{peso + datos.total | numberWithCommas}} <br />
+                    <b>ITBIS: </b>                    
+                </p>
+                <p class="text-danger">
+                    <b>TOTAL: {{peso + datos.total | numberWithCommas}}</b>
+                </p>
+            </div>
+        </div>
+        <div class="row no-gutters items-group d-flex justify-content-between mt-4">
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>RECIBIDO POR</b></p>
+            </div>
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>ENTREGADO POR</b></p>
+            </div>
+        </div>
+    </div>
+</div>

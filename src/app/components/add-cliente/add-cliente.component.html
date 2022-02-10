@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="col">
+        <h3 class="text-primary mt-3 mb-3">Agregar Cliente</h3>
+        <form #addForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <input type="text" name="nombre" placeholder="Nombre:" class="form-control" #nombre="ngModel"
+                    [(ngModel)]="cliente.nombre" required>
+                <small *ngIf="!nombre.valid && nombre.touched" class="text-danger">
+                    <b>Escribe un nombre válido...</b>
+                </small>
+            </div>
+            <div class="form-group">
+                <input type="text" name="direccion" placeholder="Dirección:" class="form-control" #direccion="ngModel"
+                    [(ngModel)]="cliente.direccion">
+            </div>
+            <div class="form-group">
+                <input type="text" name="representante" placeholder="Representante:" class="form-control" #representante="ngModel"
+                    [(ngModel)]="cliente.representante">
+            </div>            
+            <div class="form-group">
+                <input type="tel" name="telefono" placeholder="Teléfono:" class="form-control" #telefono="ngModel"
+                    [(ngModel)]="cliente.telefono">
+                <small *ngIf="!validarTelefono() && telefono.touched" class="text-danger">
+                    <b>Escribe un teléfono válido...</b>
+                </small>
+            </div>  
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email:" class="form-control" #email="ngModel"
+                    [(ngModel)]="cliente.email">
+                <small *ngIf="!validarEmail() && email.touched" class="text-danger">
+                    <b>Escribe un correo válido...</b>
+                </small>
+            </div> 
+            <div class="form-group">
+                <input type="text" name="rnc" placeholder="RNC:" class="form-control" #rnc="ngModel"
+                    [(ngModel)]="cliente.rnc">
+            </div>
+            <div class="form-group">
+                <input type="text" name="ncf" placeholder="NCF:" class="form-control" #ncf="ngModel"
+                    [(ngModel)]="cliente.ncf">
+            </div>
+
+            <div class="my-3" *ngIf="cliente.nombre.length > 0">
+                <h4 class="text-primary">Cargar Logotipo:</h4>
+                <angular-file-uploader [config]="afuConfigImages" (ApiResponse)="imageUpload($event)">
+                </angular-file-uploader>
+                <hr>
+            </div>
+        
+            <button class="btn btn-primary mt-1 mb-5 w-100" type="submit" 
+                [disabled]="!addForm.valid">Guardar</button>  
+        </form>
+    </div>
+</div>

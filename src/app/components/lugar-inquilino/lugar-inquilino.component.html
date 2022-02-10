@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col">
+        <h3 class="text-primary mt-3 mb-3">Asignar Módulo a Inquilino</h3>
+        <form #asignarForm="ngForm">
+            <div class="form-group mt-3">
+                <label for="inquilinos">Buscar Inquilino:</label>
+                <input type="text" class="form-control" placeholder="Inquilino:" [(ngModel)]="inquilino"
+                    [ngbTypeahead]="searchInquilino" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' required />
+            </div>
+            <div class="form-group">
+                <label for="lugar">Buscar Lugar:</label>
+                <input id="lugar" type="text" class="form-control" placeholder="Lugar:" [(ngModel)]="lugar"
+                    [ngbTypeahead]="searchLugar" [inputFormatter]="formatter2" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' required (change)="getDivisionesPisoLugar()" />
+            </div>
+            <div class="form-group" *ngIf="lugar != null && lugar.id != 0">
+                <select name="piso" class="custom-select custom-select" #piso="ngModel" [(ngModel)]="datos.piso" 
+                    (change)="onChangePisos($event)">
+                    <option [value]="0" class="text-danger">Selecciona el piso:</option>
+                    <option *ngFor="let data of divisionesPisoLugar" [value]="data.piso">{{'Piso '+data.piso}}</option>
+                </select>
+                <select name="divisiones" class="custom-select custom-select-sm mt-1" #divisiones="ngModel" [(ngModel)]="datos.division"
+                    *ngIf="cantDivisionesPiso != null && cantDivisionesPiso > 0">
+                    <option [value]="0" class="text-danger">Selecciona el módulo:</option>
+                    <option *ngFor="let ran of createRange(cantDivisionesPiso)" [value]="ran">{{'Módulo: '+ran}}</option>
+                </select>
+            </div>
+
+            <div class="form-group" *ngIf="datos != null && datos.division != 0">
+                <input type="text" name="sp_se" placeholder="SP/SE:" class="form-control" #sp_se="ngModel"
+                    [(ngModel)]="datos.sp_se">
+            </div>
+
+            <div class="form-group" *ngIf="datos != null && datos.division != 0">
+                <input type="number" name="metrosCuadrados" placeholder="M²:" class="form-control" #metrosCuadrados="ngModel"
+                    [(ngModel)]="datos.metrosCuadrados">
+            </div>
+
+            <div class="form-group" *ngIf="datos != null && datos.division != 0">
+                <textarea name="descripcion" placeholder="Descripción:" class="form-control" #descripcion="ngModel"
+                    [(ngModel)]="datos.descripcion"></textarea>
+            </div>
+
+            <small class="text-danger" *ngIf="isError">
+                <b>{{errorMsn}}</b>
+            </small>
+            <hr>
+
+            <button class="btn btn-primary mr-1" (click)="asignar()" >
+                Asignar
+            </button>
+            <button class="btn btn-danger" (click)="quitar()">
+                Quitar
+            </button>
+        </form>
+    </div>
+</div>

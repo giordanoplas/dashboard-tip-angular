@@ -1,0 +1,42 @@
+<div class="col-12 col-md-auto p-0 m-0 text-center">
+    <nav class="menu justify-content-center flex-wrap">
+        <a [routerLink]="['/home']" [routerLinkActive]="['active']" class="p-2">
+            <fa-icon [icon]="faThLarge"></fa-icon>
+            <p class="m-0">Admin</p>
+        </a>  
+        <a [routerLink]="['/propiedades']" [routerLinkActive]="['active']" class="p-2">
+            <fa-icon [icon]="faBuilding"></fa-icon>
+            <p class="m-0">Propiedades</p>
+        </a>  
+        <!--
+        <a [routerLink]="['/multimedia']" [routerLinkActive]="['active']" class="p-2">
+            <fa-icon [icon]="faPhotoVideo"></fa-icon>
+            <p class="m-0">Multimedia</p>
+        </a> 
+        -->
+        <a [routerLink]="['/agentes']" [routerLinkActive]="['active']" class="p-2">
+            <fa-icon [icon]="faUserTie"></fa-icon>
+            <p class="m-0">Agentes</p>
+        </a> 
+        <a [routerLink]="['/usuarios']" [routerLinkActive]="['active']" class="p-2">
+            <fa-icon [icon]="faUsersCog"></fa-icon>
+            <p class="m-0">Usuarios</p>
+        </a>          
+        <a [routerLink]="['/cxc']" [routerLinkActive]="['active']" class="p-2">
+            <fa-icon [icon]="faFileContract"></fa-icon>
+            <p class="m-0">CxC</p>
+        </a>
+        <a [routerLink]="['/cxp']" [routerLinkActive]="['active']" class="p-2">
+            <fa-icon [icon]="faFileInvoiceDollar"></fa-icon>
+            <p class="m-0">CxP</p>
+        </a>
+        <a [routerLink]="['/nominas']" [routerLinkActive]="['active']" class="p-2">
+            <fa-icon [icon]="faIdBadge"></fa-icon>
+            <p class="m-0">NOM</p>
+        </a>
+        <a (click)="clearSession()" class="p-2">
+            <fa-icon [icon]="faSignOutAlt"></fa-icon>
+            <p class="m-0">Salir</p>
+        </a>               
+    </nav>         
+</div>

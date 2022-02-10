@@ -1,0 +1,17 @@
+<header class="row d-flex justify-content-between py-2 p-md-3">
+    <div class="col-12 col-md-auto d-flex justify-content-center align-items-center mb-2 m-md-0">
+        <a href="https://tuinmuebleperfectord.com" target="_blank">
+            <img [src]="_ruta+'assets/images/logotipos/logo.png'" [alt]="'Tu Inmueble Perfecto'" 
+                style="max-width: 150px;" class="img img-fluid">
+        </a>        
+    </div>
+    <div class="col-12 col-md-auto d-flex justify-content-center align-items-center text-white text-center mb-3 m-md-0">
+        <h4 class="m-0">Bienvenido {{nombre}}</h4>
+    </div>
+    <div class="col-12 col-md-auto d-flex justify-content-center align-items-center logout">
+        <a (click)="clearSession()" class="btn btn-outline-light">Cerrar Sesión</a>
+    </div>
+    <div class="logout-sm d-none">
+        <a (click)="clearSession()" class="btn btn-sm btn-outline-light ml-1">Salir</a>
+    </div>
+</header>

@@ -1,0 +1,49 @@
+<div class="row">
+    <div class="col">
+        <h3 class="text-primary mt-3 mb-3">Deudas Cliente</h3>
+        <form #addForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group mt-3">
+                <label for="clientes">Buscar Cliente:</label>
+                <input type="text" class="form-control" placeholder="Cliente:" [(ngModel)]="cliente"
+                    [ngbTypeahead]="searchCliente" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' (change)="updateOrModify()" required />
+            </div>
+            <div class="form-group" *ngIf="cliente != null && cliente.id > 0">
+                <input type="number" name="deudaTotal" placeholder="Deuda Total:" class="form-control" #deudaTotal="ngModel"
+                    [(ngModel)]="datos.deudaTotal" required>
+                <small *ngIf="!deudaTotal.valid && deudaTotal.touched" class="text-danger">
+                    <b>Escribe una deuda válida...</b>
+                </small>
+            </div>
+            <div class="form-group" *ngIf="cliente != null && cliente.id > 0">
+                <input type="number" name="pagoExtraordinario" placeholder="Pago Extraordinario:" class="form-control" #pagoExtraordinario="ngModel"
+                    [(ngModel)]="datos.pagoExtraordinario">
+            </div>
+            <div class="form-group" *ngIf="cliente != null && cliente.id > 0">
+                <input type="number" name="pagoAdicional" placeholder="Pago Adicional:" class="form-control" #pagoAdicional="ngModel"
+                    [(ngModel)]="datos.pagoAdicional">
+            </div>
+            <div class="form-group" *ngIf="cliente != null && cliente.id > 0">
+                <select name="periodo" class="custom-select custom-select" #periodo="ngModel" [(ngModel)]="datos.periodo">
+                    <option [value]="0" class="text-danger">Selecciona el periodo:</option>
+                    <option *ngFor="let data of periodos" [value]="data.id">{{data.descripcion}}</option>
+                </select>
+            </div>
+            <div class="form-group" *ngIf="cliente != null && cliente.id > 0">
+                <textarea name="descripcion" placeholder="Descripción:" class="form-control" #descripcion="ngModel"
+                    [(ngModel)]="datos.descripcion"></textarea>
+            </div>
+
+            <button class="btn btn-primary mt-1 mb-5 w-100" type="submit" 
+                [disabled]="!addForm.valid || datos.periodo == 0 || cliente == null" 
+                *ngIf="cliente != null && cliente.id > 0 && !isModify">
+                Guardar
+            </button>
+            <button class="btn btn-success mt-1 mb-5 w-100" type="submit" 
+                [disabled]="!addForm.valid || datos.periodo == 0 || cliente == null" 
+                *ngIf="cliente != null && cliente.id > 0 && isModify">
+                Modificar
+            </button>
+        </form>
+    </div>
+</div>

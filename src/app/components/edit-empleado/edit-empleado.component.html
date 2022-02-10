@@ -1,0 +1,74 @@
+<div class="row">
+    <div class="col">
+        <h3 class="text-primary mt-3 mb-3">Modificar Empleado</h3>
+        <form #addForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group mt-3">
+                <label for="empleados">Buscar Empleado:</label>
+                <input type="text" class="form-control" placeholder="Empleado:" [(ngModel)]="empleado"
+                    [ngbTypeahead]="searchEmpleado" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' required (change)="setDatos()" />
+            </div>
+            <hr>
+            <div *ngIf="empleado != null && empleado.id > 0">
+                <div class="form-group">
+                    <input type="text" name="nombre" placeholder="Nombre:" class="form-control" #nombre="ngModel"
+                        [(ngModel)]="datos.nombre" required>
+                    <small *ngIf="!nombre.valid && nombre.touched" class="text-danger">
+                        <b>Escribe un nombre válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="carnet" placeholder="Carnet:" class="form-control" #carnet="ngModel"
+                        [(ngModel)]="datos.carnet" required>
+                    <small *ngIf="!carnet.valid && carnet.touched" class="text-danger">
+                        <b>Escribe un nombre válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="direccion" placeholder="Dirección:" class="form-control" #direccion="ngModel"
+                        [(ngModel)]="datos.direccion">
+                </div>
+                <div class="form-group">
+                    <input type="tel" name="telefono1" placeholder="Teléfono 1:" class="form-control" #telefono1="ngModel"
+                        [(ngModel)]="datos.telefono1">
+                    <small *ngIf="!validarTelefono(datos.telefono1) && telefono1.touched" class="text-danger">
+                        <b>Escribe un teléfono válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="tel" name="telefono2" placeholder="Teléfono 2:" class="form-control" #telefono2="ngModel"
+                        [(ngModel)]="datos.telefono2">
+                    <small *ngIf="!validarTelefono(datos.telefono2) && telefono2.touched" class="text-danger">
+                        <b>Escribe un teléfono válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email:" class="form-control" #email="ngModel"
+                        [(ngModel)]="datos.email">
+                    <small *ngIf="!validarEmail() && email.touched" class="text-danger">
+                        <b>Escribe un correo válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="descripcion" placeholder="Descripción:" class="form-control"
+                        #descripcion="ngModel" [(ngModel)]="datos.descripcion">
+                </div>    
+
+                <div class="form-group" *ngIf="datos.foto != null && datos.foto.length > 0">
+                    <h4><b>Foto Actual:</b></h4>
+                    <img [src]="_dataurl+'img/fotos-empleados/'+datos.foto" alt="foto" style="max-width: 250px;">
+                </div>
+
+                <div class="my-3">
+                    <h4 class="text-primary">Cargar Foto:</h4>
+                    <angular-file-uploader [config]="afuConfigImages" (ApiResponse)="imageUpload($event)" #fileUpload>
+                    </angular-file-uploader>
+                    <hr>
+                </div>
+
+                <button class="btn btn-success mt-1 mb-5 w-100" type="submit"
+                    [disabled]="!addForm.valid">Modificar</button>
+            </div>
+        </form>
+    </div>
+</div>

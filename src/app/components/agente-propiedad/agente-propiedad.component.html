@@ -1,0 +1,22 @@
+<form #ageProForm="ngForm" class="mt-3">
+    <h4>Asignar agente a propiedad</h4>
+    <div class="form-group mt-3">
+        <label for="agente">Buscar agente:</label>
+        <input type="text" class="form-control" placeholder="Agente:" [(ngModel)]="agente" [ngbTypeahead]="searchAge"
+            [inputFormatter]="formatter" [resultFormatter]="formatter" [ngModelOptions]="{standalone: true}"
+            [editable]='false' />
+    </div>
+    <div class="form-group">
+        <label for="propiedad">Buscar Propiedad:</label>
+        <input id="propiedad" type="text" class="form-control" placeholder="Propiedad:" [(ngModel)]="propiedad"
+            [ngbTypeahead]="searchPro" [inputFormatter]="formatter" [resultFormatter]="formatter"
+            [ngModelOptions]="{standalone: true}" [editable]='false' />
+    </div>
+    <small class="text-danger" *ngIf="isError">
+        <b>{{errorMsn}}</b>
+    </small>
+    <hr>
+
+    <button class="btn btn-primary mr-1" (click)="asignar()">Asignar</button>
+    <button class="btn btn-danger" (click)="quitar()">Quitar</button>
+</form>

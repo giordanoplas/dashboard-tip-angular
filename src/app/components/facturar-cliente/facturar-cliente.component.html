@@ -1,0 +1,153 @@
+<div class="row">
+    <div class="col" *ngIf="cliente != null">        
+        <h3 class="text-primary mt-3 mb-2">{{cliente[0].cliente}}</h3>   
+        <!--
+        <h6 class="text-danger"><b>Deuda Total:</b> {{cliente.deuda_total | numberWithCommas}}</h6>
+        <h6 class="text-danger" *ngIf="cliente.pago != null"><b>Pago:</b> {{cliente.pago | numberWithCommas}}</h6>
+        <h6 class="text-danger mb-3" *ngIf="cliente.pago != null"><b>Fecha último pago:</b> {{cliente.fecha_ultimo_pago | date: 'yyyy-MM-dd'}}</h6>
+        <h6 class="text-danger" *ngIf="cliente.pago == null"><b>Pago:</b> N/A</h6>        
+        <h6 class="text-danger mb-3" *ngIf="cliente.pago == null"><b>Fecha último pago:</b> N/A</h6>
+        -->
+        <form #facturarForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group" *ngIf="lugares != null">
+                <select name="tipo" class="form-control" #tipo="ngModel" [(ngModel)]="datos.lugarID" (change)="onSelectMC()">
+                    <option value="0">Selecciona un lugar...</option>
+                    <option *ngFor="let data of lugares" [value]="data.lugarID">{{data.nombre}}</option>     
+                </select>
+            </div>
+            <div class="form-group" *ngIf="datos.lugarID > 0">
+                <input type="number" name="precio" placeholder="Precio:" class="form-control" #precio="ngModel"
+                    [(ngModel)]="datos.precio" (input)="onInputPrecio()" required>
+                <small *ngIf="!precio.valid && precio.touched" class="text-danger">
+                    <b>Escribe un precio válido...</b>
+                </small>
+            </div>  
+            <div class="form-group" *ngIf="datos.lugarID > 0">
+                <input type="number" name="precioExtraordinario" placeholder="Precio Extraordinario:" class="form-control" #precioExtraordinario="ngModel"
+                    [(ngModel)]="datos.precioExtraordinario" (input)="onInputPrecio()">
+            </div>
+            <div class="form-group" *ngIf="datos.lugarID > 0">
+                <input type="number" name="precioAdicional" placeholder="Precio Adicional:" class="form-control" #precioAdicional="ngModel"
+                    [(ngModel)]="datos.precioAdicional" (input)="onInputPrecio()">
+            </div>     
+            <div class="form-group" *ngIf="datos.lugarID > 0">
+                <textarea name="detalle" placeholder="Detalle:" class="form-control" #detalle="ngModel"
+                    [(ngModel)]="datos.detalle" required></textarea>
+                <small *ngIf="!detalle.valid && detalle.touched" class="text-danger">
+                    <b>Escribe un detalle válido...</b>
+                </small>
+            </div>
+            <div class="form-group" *ngIf="datos.lugarID > 0">
+                <textarea name="nota" placeholder="Nota:" class="form-control" #nota="ngModel"
+                    [(ngModel)]="datos.nota"></textarea>
+            </div>
+            <div class="form-group" *ngIf="datos.lugarID > 0">
+                <input type="date" class="form-control" name="datePicker" #datePicker="ngModel"
+                    [(ngModel)]="datos.fecha">
+            </div>
+            <div class="custom-control custom-checkbox mb-2" *ngIf="datos.lugarID > 0 && cliente[0].rnc != null">
+                <input type="checkbox" id="rnc" class="custom-control-input" (change)="onPrintCheckedRNC($event)" 
+                    checked>
+                <label for="rnc" class="custom-control-label">RNC</label>
+            </div>
+            <div class="custom-control custom-checkbox mb-2" *ngIf="datos.lugarID > 0">
+                <input type="checkbox" id="print_f" class="custom-control-input" (change)="onPrintChecked($event)">
+                <label for="print_f" class="custom-control-label">Imprimir Factura</label>
+            </div>
+
+            <button class="btn btn-primary mt-1 mb-5 w-100" type="submit"
+                [disabled]="!facturarForm.valid || datos.lugarID==0" (click)="onClick()">Guardar</button>
+        </form>
+    </div>
+</div>
+
+<div id="print_f_html" *ngIf="cliente != null" class="d-none">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-between mb-3">
+            <div class="col-4" *ngIf="cliente != null && cliente[0].logotipo != null && cliente[0].logotipo.length > 0">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img [src]="_dataurl+'img/logotipos-clientes/'+cliente[0].logotipo"
+                            [alt]="'Logotipo Cliente'" width="200px" class="img img-fluid">
+                    </div>
+                    <div class="col-12">
+                        <p><b>{{cliente[0].direccion}}</b></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <img [src]="_ruta+'assets/images/logotipos/logo6.png'" [alt]="'logotipo'" width="200px"
+                    class="img img-fluid">
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-6 mr-3">
+                <p>
+                    <b>Cliente:</b> {{cliente[0].cliente}} <br/>
+                    <b>RNC:</b> {{datos.rnc}} <br/>
+                    <b>NCF:</b> {{datos.ncf}} <br/>
+                    <b>Detalle:</b> {{datos.detalle}}
+                </p>
+            </div>
+            <div class="col-auto">
+                <p>
+                    <b>Factura #:</b> {{datos.numero}} <br />
+                    <b>Fecha:</b> {{datos.fecha}} <br />
+                    <b>Válida Hasta:</b> {{datos.vh}}
+                </p>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group mt-4">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Lugar</th>                            
+                            <th>Precio</th>
+                            <th>Precio Ext.</th>
+                            <th>Precio Adc.</th>
+                            <th>SUB-TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of dataTable">
+                            <td>{{data.lugar}}</td>                            
+                            <td>{{peso + ' ' + data.precio | numberWithCommas}}</td>
+                            <td>{{peso + ' ' + data.precioExtraordinario | numberWithCommas}}</td>
+                            <td>{{peso + ' ' + data.precioAdicional | numberWithCommas}}</td>
+                            <td>{{peso + ' ' + data.subtotal | numberWithCommas}}</td>
+                        </tr>  
+                    </tbody> 
+                </table>
+            </div>
+        </div>
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-4 text-left">
+                <p>
+                    <b>Nota:</b> {{datos.nota}}
+                </p>
+            </div>
+            <div class="col-auto text-left">
+                <p>
+                    <b>TOTAL EXENTO: </b> {{peso + datos.total | numberWithCommas}} <br />
+                    <b>ITBIS: </b>                    
+                </p>
+                <p class="text-danger">
+                    <b>TOTAL: {{peso + datos.total | numberWithCommas}}</b>
+                </p>
+            </div>
+        </div>
+        <div class="row no-gutters items-group d-flex justify-content-between mt-4">
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>RECIBIDO POR</b></p>
+            </div>
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>ENTREGADO POR</b></p>
+            </div>
+        </div>
+    </div>
+</div>

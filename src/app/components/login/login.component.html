@@ -1,0 +1,28 @@
+<div class="container d-flex justify-content-center">
+    <div class="row login bg-white">
+        <div class="col text-center text-sm-left mx-2 my-5"> 
+            <img [src]="_ruta+'assets/images/logotipos/logo3.png'" [alt]="'Tu Inmueble Perfecto'" style="max-width: 250px;" class="img img-fluid mb-3">
+            <h3 class="text-primary text-center">Administración</h3>               
+            <form #loginForm="ngForm" (ngSubmit)="goLogin()">                
+                <div class="input-group-lg my-3">
+                    <input type="text" name="usuario" class="form-control" placeholder="Usuario" #usuario="ngModel" [(ngModel)]="userString" required>   
+                    <small class="text-danger" *ngIf="!usuario.valid && usuario.touched">
+                        <b>Escribe un usuario válido</b>
+                    </small>
+                    <input type="password" name="password" class="form-control mt-2" placeholder="Contraseña" #password="ngModel" [(ngModel)]="passString" required>                     
+                    <small class="text-danger" *ngIf="!password.valid && password.touched">
+                        <b>Escribe una contraseña válida</b>
+                    </small>
+                </div>
+
+                <div class="input-group-lg my-3">
+                    <small class="text-danger" *ngIf="loginError == true">
+                        <b>Datos incorrectos o no encontrados...</b>
+                    </small>
+                </div>                
+                <input type="submit" class="btn btn-lg btn-outline-primary w-100" value="Login" 
+                    [disabled]="!loginForm.valid">
+            </form>
+        </div>
+    </div>
+</div>

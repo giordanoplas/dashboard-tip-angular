@@ -1,0 +1,245 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    background: rgb(238,238,238);
+    background: linear-gradient(85deg, rgba(238,238,238,1) 0%, rgba(232,232,232,1) 40%, rgba(248,248,248,1) 70%, rgba(245,245,245,1) 100%);
+}
+
+header {
+    background: #082ca7;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.login {
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+}
+
+.text-primary {
+    color: #082ca7 !important;
+}
+.btn-primary {
+    background: #082ca7 !important;
+}
+.btn-primary:hover {
+    background: rgba(6, 34, 128) !important;
+}
+
+.barra-izquierda {
+    background: #082ca7;
+    color: #fff;
+    max-width: 70px;
+    min-height: 100vh;
+    padding: 0;
+
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+.barra-izquierda .menu {
+    width: 70px;
+}
+
+.barra-izquierda .menu a {
+    display: block;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    border-bottom: 1px solid rgb(255, 255, 255, .1);
+    cursor: pointer;
+}
+
+.barra-izquierda .menu a fa-icon {
+    font-size: 20px;
+}
+.barra-izquierda .menu a p {
+    font-size: 10px;
+}
+
+.barra-izquierda .menu a:hover {
+    background: rgba(0, 0, 0, .5);
+    text-decoration: none;
+}
+
+.barra-izquierda .menu .active {
+    background: gray;
+}
+
+.home .caja {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+}
+
+form {
+    max-width: 500px;
+}
+
+form textarea {
+    min-height: 100px;
+    max-height: 250px;
+}
+
+.badge,
+.modal-badge .badge {
+    position: absolute;
+    font-size: 16px;
+}
+
+.view .destacado::before {
+    position: absolute;
+    top: 10px;
+    right: -40px;
+    display: block;
+    box-sizing: border-box;
+    content: "¡Destacado!";
+    text-transform: uppercase;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 700;
+    color: #fff;
+
+    background: transparent; 
+    height: 0;
+    width: 150px;  
+
+    border: 25px solid transparent;
+    border-bottom: 25px solid #ea723d;
+    transform: rotate(45deg);
+    line-height: 23px;
+}
+
+.view .vendido::before {
+    position: absolute;
+    top: 10px;
+    right: -40px;
+    display: block;
+    box-sizing: border-box;
+    content: "¡Vendido!";
+    text-transform: uppercase;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 700;
+    color: #fff;
+
+    background: transparent; 
+    height: 0;
+    width: 150px;  
+
+    border: 25px solid transparent;
+    border-bottom: 25px solid #0530a1;
+    transform: rotate(45deg);
+    line-height: 23px;
+}
+
+.view .alquilado::before {
+    position: absolute;
+    top: 10px;
+    right: -40px;
+    display: block;
+    box-sizing: border-box;
+    content: "¡Alquilado!";
+    text-transform: uppercase;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 700;
+    color: #fff;
+
+    background: transparent; 
+    height: 0;
+    width: 150px;  
+
+    border: 25px solid transparent;
+    border-bottom: 25px solid #407436;
+    transform: rotate(45deg);
+    line-height: 23px;
+}
+
+.multimedia .imagenes button img {
+    transition: all 300ms;
+}
+
+.multimedia .imagenes button img:hover {    
+    border: dashed 3px red;
+    padding: 5px;
+}
+
+.division {
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+}
+
+#cliente {
+    font-size: x-large;
+}
+
+.cuadrod {
+    background-color: red;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;
+    width: 10px;
+    height: 10px;
+}
+
+.cuadroi {
+    background-color: orange;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;
+    width: 10px;
+    height: 10px;
+}
+
+.cuadrond {
+    background-color: #0530a1;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;
+    width: 10px;
+    height: 10px;
+}
+
+.cuadrou {
+    background-color: #8b8b8b;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;
+    width: 10px;
+    height: 10px;
+}
+
+@media screen and (max-width: 885px) {
+    .barra-izquierda {
+        width: 100vw;
+        height: 67px;
+        max-width: 100%;
+        min-width: auto;
+        min-height: auto;
+        box-shadow: none;
+    }
+    .barra-izquierda .menu  {
+        width: auto !important;        
+        border: none;
+        
+    }
+    .barra-izquierda .menu a {
+        width: 70px;
+        display: inline-block !important;
+        border: none;        
+    }
+
+    header img {
+        width: 120px;
+    }
+
+    header h4 {
+        font-size: 16px;
+    }
+
+    header .logout {
+        display: none !important;
+    }
+
+    header .logout-sm {
+        display: block !important;
+        position: absolute !important;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .barra-izquierda .menu a:last-child {
+        display: none !important;
+    }
+}

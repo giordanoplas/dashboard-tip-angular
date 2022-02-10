@@ -1,0 +1,169 @@
+<div class="row view">
+    <div class="col-12 mt-3">
+        <form #buscarForm="ngForm" (ngSubmit)="onBuscar()">            
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Inquilino:" [(ngModel)]="inquilino"
+                    [ngbTypeahead]="searchInquilino" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' (input)="onInputBuscar()" required />
+                <div class="input-group-append">
+                    <button class="btn btn-primary">
+                        <fa-icon [icon]="faSearch"></fa-icon>
+                    </button>                    
+                </div>                
+            </div>
+            <div class="form-group">                
+                <input type="date" class="form-control form-control-sm" name="datePicker" #datePicker="ngModel"
+                    [(ngModel)]="selectedDate" (change)="datePickerChange()">
+            </div>            
+        </form>
+    </div>
+    <div class="col-12 text-center" *ngIf="facturasInquilino == null && dataSearchEmpty">
+        <h2 class="text-danger">No hay datos que coincidan con tu búsqueda...</h2>
+    </div>
+    <div class="col-12 text-center" *ngIf="facturasInquilino == null && !dataSearchEmpty">
+        <img [src]="_ruta+'assets/images/resources/loading.gif'" [alt]="'Cargando....'" width="300px"
+            class="img img-fluid">
+    </div>
+    <div class="col-12 text-center" *ngIf="facturasInquilino != null && facturasInquilino.length == 0">
+        <h2 class="text-danger">No hay datos a mostrar...</h2>
+    </div>
+    <div class="col-12 my-4" *ngIf="(facturasInquilino != null && facturasInquilino.length > 0)">        
+        <div class="row">         
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-striped table-hover" id="data_table">
+                        <thead class="thead-dark">
+                            <tr>                 
+                                <th>Módulo</th>
+                                <th>Factura</th>
+                                <th>SP/SE</th>
+                                <th>Precio M²</th>    
+                                <th>M²</th>
+                                <th>Subtotal</th>                          
+                                <th>Detalle</th>
+                                <th>Fecha</th>
+                                <th>Vence</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of facturasInquilino">
+                                <td>{{data.modulo}}</td>
+                                <td>{{data.facturaN}}</td>
+                                <td>{{data.sp_se}}</td>
+                                <td>{{data.precio_metro_cuadrado | numberWithCommas}}</td>
+                                <td>{{data.metros_cuadrados}}</td>
+                                <td>{{data.subtotal}}</td>
+                                <td>{{data.detalle}}</td>
+                                <td>{{data.fecha | date: 'yyyy-MM-dd'}}</td>                                
+                                <td>{{data.valido_hasta | date: 'yyyy-MM-dd'}}</td>                                
+                                <td class="d-flex justify-content-center">
+                                    <button class="btn btn-outline-primary btn-sm mr-1" (click)="printFactura(data.inquilinoID, data.facturaN)">
+                                        <fa-icon [icon]="faPrint"></fa-icon>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" (click)="deleteFactura(data.inquilinoID, data.facturaN)">
+                                        <fa-icon [icon]="faTrash"></fa-icon>
+                                    </button>                                    
+                                </td>
+                            </tr>  
+                        </tbody>          
+                    </table>                    
+                </div>               
+            </div>            
+        </div>      
+    </div>
+</div>
+
+<div id="print_f_html" *ngIf="inquilino != null && inquilino.id > 0 && facturaPrint != null" class="d-none">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-between">
+            <div class="col-4" *ngIf="facturaPrint[0].logotipo != null && facturaPrint[0].logotipo.length > 0">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img [src]="_dataurl+'img/logotipos-clientes/'+facturaPrint[0].logotipo"
+                            [alt]="'Logotipo Cliente'" width="200px" class="img img-fluid">
+                    </div>
+                    <div class="col-12">
+                        <p><b>{{facturaPrint[0].direccion}}</b></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <img [src]="_ruta+'assets/images/logotipos/logo6.png'" [alt]="'logotipo'" width="200px"
+                    class="img img-fluid">
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-6 mr-3">
+                <p>
+                    <b>Cliente:</b> {{facturaPrint[0].inquilino}} <br />
+                    <b>Lugar:</b> {{facturaPrint[0].lugar}} <br />
+                    <b>RNC:</b> {{facturaPrint[0].rnc}} <br />
+                    <b>NCF:</b> {{facturaPrint[0].ncf}} <br />
+                    <b>Detalle:</b> {{facturaPrint[0].detalle}}
+                </p>
+            </div>
+            <div class="col-auto">
+                <p>
+                    <b>Factura #:</b> {{facturaPrint[0].facturaN}} <br />
+                    <b>Fecha:</b> {{facturaPrint[0].fecha | date:'yyyy-MM-dd'}} <br />
+                    <b>Válida Hasta:</b> {{facturaPrint[0].valido_hasta | date:'yyyy-MM-dd'}}
+                </p>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group mt-4">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Módulo</th>
+                            <th>SP/SE</th>
+                            <th>Precio por M²</th>
+                            <th>M²</th>
+                            <th>SUB-TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of facturaPrint">
+                            <td>{{data.modulo}}</td>
+                            <td>{{data.sp_se}}</td>
+                            <td>{{peso + ' ' + data.precio_metro_cuadrado | numberWithCommas}}</td>
+                            <td>{{data.metros_cuadrados}}</td>
+                            <td>{{peso + ' ' + data.subtotal | numberWithCommas}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-4 text-left">
+                <p>
+                    <b>Nota:</b> {{facturaPrint[0].nota}}
+                </p>
+            </div>
+            <div class="col-auto text-left">
+                <p>
+                    <b>TOTAL EXENTO: </b> {{peso + total | numberWithCommas}} <br />
+                    <b>ITBIS: </b>                    
+                </p>
+                <p class="text-danger">
+                    <b>TOTAL: {{peso + total | numberWithCommas}}</b>
+                </p>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between mt-4">
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>RECIBIDO POR</b></p>
+            </div>
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>ENTREGADO POR</b></p>
+            </div>
+        </div>
+    </div>
+</div>

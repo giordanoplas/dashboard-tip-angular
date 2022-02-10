@@ -1,0 +1,88 @@
+<h1 class="text-muted text-center my-3">Multimedia</h1>
+<h4 *ngIf="codigo!=''" class="text-primary">Código: <b>{{codigo}}</b></h4>
+<hr>
+<div class="text-center" *ngIf="propiedad == null">
+    <img [src]="_ruta+'assets/images/resources/loading.gif'" [alt]="'Cargando....'" width="300px" class="img img-fluid">
+</div>
+<div class="row multimedia" *ngIf="propiedad != null">
+    <div class="col-auto">
+        <div class="my-3">
+            <h4 class="text-primary">Cargar imágenes:</h4>
+            <angular-file-uploader [config]="afuConfigImages" (ApiResponse)="imageUpload($event)">
+            </angular-file-uploader>
+            <hr>
+        </div>
+        <div class="mb-4">
+            <h4 class="text-success mt-3">Cargar videos:</h4>
+            <angular-file-uploader [config]="afuConfigVideos" (ApiResponse)="videoUpload($event)">
+            </angular-file-uploader>
+            <hr>
+        </div>
+        <h4>Videos</h4>
+        <p class="text-danger mb-5" *ngIf="propiedadVideos == null"><b>Esta propiedad no contiene videos...</b></p>
+        <div *ngIf="propiedadVideos != null" class="mb-5">
+            <div class="card mb-3" *ngFor="let pv of propiedadVideos">
+                <div class="card-header">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" [id]="pv.id" class="custom-control-input" (change)="onChangePopup($event, pv.id)"
+                            [checked]="(pv.mp_cabecera != '' && pv.mp_mensaje != '')
+                                || isInput==true">
+                        <label [for]="pv.id" class="custom-control-label" style="font-size: 18px;">popup</label>
+                    </div>
+                    <form #addPopup="ngForm" (ngSubmit)="onSubmitPopup(pv.id, pv.mp_cabecera, pv.mp_mensaje)" class="mt-2" 
+                        *ngIf="(pv.mp_cabecera != '' && pv.mp_mensaje != '') 
+                            || isInput==true">
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-sm" name="cabecera" placeholder="Cabecera:"
+                                #cabecera="ngModel" [(ngModel)]="pv.mp_cabecera" (input)="onInput()" required>
+                            <small *ngIf="!cabecera.valid && cabecera.touched" class="text-danger">
+                                <b>Escribe una cabecera válida...</b>
+                            </small>
+                            <small *ngIf="pv.mp_cabecera.length > 40" class="text-danger">
+                                <b>Límite 40 caracteres...</b>
+                            </small>
+                            <input type="text" class="form-control form-control-sm mt-1" name="mensaje" placeholder="Mensaje:"
+                                #mensaje="ngModel" [(ngModel)]="pv.mp_mensaje" (input)="onInput()" required>
+                            <small *ngIf="!mensaje.valid && mensaje.touched" class="text-danger">
+                                <b>Escribe un mensaje válido...</b>
+                            </small>
+                            <small *ngIf="pv.mp_mensaje.length > 45" class="text-danger">
+                                <b>Límite 45 caracteres...</b>
+                            </small>
+                        </div>   
+                        <input type="submit" class="btn btn-sm btn-primary" value="Guardar" [disabled]="!addPopup.valid 
+                            || pv.mp_cabecera.length > 40 || pv.mp_mensaje.length > 45">
+                    </form>
+                </div>
+                <div class="card-img-top">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <video class="video-fluid" controls>
+                            <source [src]="_data+'videos/'+pv.video" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-danger" (click)="deleteVideo(pv.id, pv.video)">
+                        <fa-icon [icon]="faTrashAlt"></fa-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p class="text-danger ml-2" *ngIf="propiedadImagenes == null"><b>Esta propiedad no contiene imágenes...</b></p>
+
+    <div class="col-7 imagenes" *ngIf="propiedadImagenes != null" style="max-width: 100px;">
+        <h4>Imágenes</h4>
+        <div *ngFor="let pi of propiedadImagenes">
+            <button class="btn" (click)="deleteImagen(pi.id, pi.imagen, pi.principal)">
+                <img [src]="_data+'img/'+pi.imagen" class="img img-fluid" style="max-width: 300px;">
+            </button>
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" [id]="pi.id" class="custom-control-input"
+                    (change)="onChange(pi.propiedadID, pi.id)" [checked]="pi.principal==1">
+                <label [for]="pi.id" class="custom-control-label text-primary"
+                    style="font-size: 16px;"><b>Principal</b></label>
+            </div>
+        </div>
+    </div>
+</div>

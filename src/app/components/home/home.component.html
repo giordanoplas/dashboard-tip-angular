@@ -1,0 +1,36 @@
+<div class="container home">
+    <div class="row d-flex justify-content-center my-3">
+        <img [src]="_ruta+'assets/images/resources/loading7.gif'" alt="loading" style="max-width: 250px;" *ngIf="!isEstadisticas" 
+            class="img img-fluid mt-3 mx-3">
+        <div class="col-12 col-md-4 caja text-center text-muted mt-2" *ngIf="isEstadisticas">
+            <h3 class="m-0">Visitas</h3>
+            <h1>{{visitas}}</h1>
+            <!--
+            <hr>
+            <p class="m-0">Semana pasada: {{visitasSP}}</p>
+            -->
+        </div>
+        <div class="col-12 col-md-4 caja text-center text-muted mt-2 mx-0 ml-md-2" *ngIf="isEstadisticas">
+            <h3 class="m-0">Registros</h3>
+            <h1>{{registros}}</h1>
+        </div>
+        <div class="col-12 col-md-3 caja text-center text-muted mt-2 mx-0 ml-md-2" *ngIf="isEstadisticas">
+            <h3 class="m-0">Ingresos</h3>
+            <h1>{{ingresos}}</h1>
+        </div>
+        <img [src]="_ruta+'assets/images/resources/loading7.gif'" alt="loading" style="max-width: 250px;" *ngIf="!isGraficaPro" 
+            class="img img-fluid mt-3 mx-3">
+        <div class="col-12 col-md-6 caja mt-2 mt-md-3" *ngIf="isGraficaPro">
+            <canvas baseChart width="300px" height="150px" chartType="line" [datasets]="chartData1"
+                [labels]="meses" [options]="chartOptions" [colors]="chartColors" [legend]="chartLegend"
+                [plugins]="chartPlugins"></canvas>
+        </div>
+        <img [src]="_ruta+'assets/images/resources/loading7.gif'" alt="loading" style="max-width: 250px;" *ngIf="!isGraficaVenal" 
+            class="img img-fluid mt-3 mx-3">
+        <div class="col-12 col-md-5 caja mt-2 mt-md-3 mx-0 ml-md-2" *ngIf="isGraficaVenal">
+            <canvas baseChart width="300px" height="150px" chartType="line" [datasets]="chartData2"
+                [labels]="meses" [options]="chartOptions" [colors]="chartColors2" [legend]="chartLegend"
+                [plugins]="chartPlugins"></canvas>
+        </div>
+    </div>
+</div>

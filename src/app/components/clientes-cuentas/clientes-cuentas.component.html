@@ -1,0 +1,332 @@
+<div class="row view">
+    <div class="col-12 mt-3">
+        <form #buscarForm="ngForm" (ngSubmit)="onBuscar()">            
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Cliente:" [(ngModel)]="cliente"
+                    [ngbTypeahead]="searchCliente" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' (input)="onInputBuscar()" required />
+                <div class="input-group-append">
+                    <button class="btn btn-primary">
+                        <fa-icon [icon]="faSearch"></fa-icon>
+                    </button>                    
+                </div>                
+            </div>
+            <div class="form-group">                
+                <input type="date" class="form-control form-control-sm" name="datePicker" #datePicker="ngModel"
+                    [(ngModel)]="selectedDate" (change)="datePickerChange()">
+            </div>            
+        </form>
+    </div>
+    <div class="col-12 text-center" *ngIf="cuentasClienteP == null && pagoClienteLog == null && dataSearchEmpty">
+        <h2 class="text-danger">No hay datos que coincidan con tu búsqueda...</h2>
+    </div>
+    <div class="col-12 text-center" *ngIf="cuentasClienteP == null && pagoClienteLog == null && !dataSearchEmpty">
+        <img [src]="_ruta+'assets/images/resources/loading.gif'" [alt]="'Cargando....'" width="300px"
+            class="img img-fluid">
+    </div>
+    <div class="col-12 text-center" *ngIf="cuentasClienteP != null && cuentasClienteP.length == 0">
+        <h2 class="text-danger">No hay datos a mostrar...</h2>
+    </div>
+    <div class="col-12 my-4" *ngIf="(cuentasClienteP != null && cuentasClienteP.length > 0) || 
+            (pagoClienteLog != null && pagoClienteLog.length > 0)">        
+        <div class="row" *ngIf="cliente != null && cliente != null && clienteID == cliente.id" id="data_print">
+            <!--
+            <div class="col-12">
+                <div class="container-fluid" class="d-none" id="header_print">
+                    <div class="row d-flex justify-content-between mb-3">
+                        <div class="col-4" *ngIf="cliente != null && cliente.logotipo != null && cliente.logotipo.length > 0">
+                            <div class="row">
+                                <div class="col-12 d-flex justify-content-center">
+                                    <img [src]="_dataurl+'img/logotipos-clientes/'+cliente.logotipo"
+                                        [alt]="'Logotipo Cliente'" width="200px" class="img img-fluid">
+                                </div>
+                                <div class="col-12">
+                                    <p><b>{{cliente.direccion}}</b></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <img [src]="_ruta+'assets/images/logotipos/logo6.png'" [alt]="'logotipo'" width="200px"
+                                class="img img-fluid">
+                        </div>
+                    </div>
+                </div>                
+            </div>
+            -->
+            <div class="col-12">
+                <h4 class="text-primary"><b>{{cliente.nombre}}</b></h4>                
+            </div>
+            <div class="col-auto">
+                <h6 class="text-success"><b>Deuda Cliente: {{datos.deudaCliente | numberWithCommas}}</b></h6>
+            </div>   
+            <div class="col-auto" *ngIf="cliente.pago_extraordinario != null">
+                <h6 class="text-success"><b>Deuda Ex.: {{cliente.pago_extraordinario | numberWithCommas}}</b></h6>
+            </div>    
+            <div class="col-auto" *ngIf="cliente.pago_adicional != null">
+                <h6 class="text-success"><b>Deuda Ad.: {{cliente.pago_adicional | numberWithCommas}}</b></h6>
+            </div>  
+            <div class="col-auto">
+                <h6 class="text-success"><b>Pago Cliente: {{pagoCliente | numberWithCommas}}</b></h6>
+            </div>        
+            <div class="col-auto">
+                <h6 class="text-info"><b>Deudas Inq.: {{totalDeudas | numberWithCommas}}</b></h6>
+            </div>
+            <div class="col-auto">
+                <h6 class="text-info"><b>Pagos Inq.: {{totalPagos | numberWithCommas}}</b></h6>
+            </div>
+            <div class="col-auto" *ngIf="deudaPendiente > 0">
+                <h6 class="text-danger"><b>Deuda Restante: {{getDeudaPendiente() | numberWithCommas}}</b></h6>
+            </div>
+            <div class="col-auto" *ngIf="deudaPendiente <= 0">
+                <h6 class="text-success"><b>Deuda Restante: {{deudaPendiente | numberWithCommas}}</b></h6>                
+            </div>            
+            <div class="col-12 mt-2" *ngIf="pagoClienteLog != null">
+                <hr>
+                <h6 class="text-primary"><b>Cliente:</b></h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-striped table-hover">
+                        <thead class="thead-dark">
+                            <tr>                   
+                                <th>Pago</th>
+                                <th>Pago Ex.</th>
+                                <th>Pago Ad.</th>
+                                <th>Fecha Pago</th>
+                                <th>Detalle</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of pagoClienteLog">
+                                <td>{{data.pago | numberWithCommas}}</td>
+                                <td>{{data.pago_extraordinario | numberWithCommas}}</td>
+                                <td>{{data.pago_adicional | numberWithCommas}}</td>
+                                <td>{{data.fecha_pago | date: 'yyyy-MM-dd'}}</td>
+                                <td>{{data.detalle}}</td>
+                                <td class="d-flex justify-content-center">
+                                    <button class="btn btn-outline-primary btn-sm mr-1" (click)="printReciboCliente(data.cuentaClienteID, data.facturaN)">
+                                        <fa-icon [icon]="faPrint"></fa-icon>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" (click)="deleteCuentaCliente(data.cuentaClienteID)">
+                                        <fa-icon [icon]="faTrash"></fa-icon>
+                                    </button>
+                                </td>
+                            </tr>  
+                        </tbody>          
+                    </table>                    
+                </div>      
+            </div>
+            <div class="col-12" *ngIf="cuentasClienteP != null">
+                <hr>
+                <h6 class="text-primary"><b>Inquilinos:</b></h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-striped table-hover" id="data_table">
+                        <thead class="thead-dark">
+                            <tr>                    
+                                <th>Nombre</th>
+                                <th>Pago</th>
+                                <th>Pago Ade.</th>
+                                <th>Fecha Pago</th>
+                                <th>Detalle</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of cuentasClienteP">
+                                <td>{{data.inquilino}}</td>
+                                <td>{{data.pago | numberWithCommas}}</td>
+                                <td>{{data.pago_adelantado}}</td>
+                                <td>{{data.fecha_pago | date: 'yyyy-MM-dd'}}</td>
+                                <td>{{data.detalle}}</td>
+                                <td class="d-flex justify-content-center">
+                                    <button class="btn btn-outline-primary btn-sm mr-1" (click)="printReciboInquilino(data.cuentaInquilinoID, data.facturaN)">
+                                        <fa-icon [icon]="faPrint"></fa-icon>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" (click)="deleteCuentaInquilino(data.cuentaInquilinoID)">
+                                        <fa-icon [icon]="faTrash"></fa-icon>
+                                    </button>
+                                </td>
+                            </tr>  
+                        </tbody>          
+                    </table>                    
+                </div>               
+            </div>            
+        </div>    
+        <button class="btn btn-primary" (click)="printTable()" *ngIf="isSearch && cliente != null">
+            <fa-icon [icon]="faPrint"></fa-icon>
+        </button>    
+    </div>
+    <div class="col-12" *ngIf="cuentasClienteP != null && cliente != null && clienteID == cliente.id">
+        <div class="col-12 d-flex justify-content-center mt-3">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" [ngClass]="{'disabled': paginaActual == 1}">
+                        <span class="page-link" *ngIf="paginaActual == 1">
+                            <fa-icon [icon]="faAngleDoubleLeft"></fa-icon>
+                        </span>
+                        <a class="page-link" (click)="link(prevPage())" *ngIf="paginaActual != 1"
+                            style="cursor: pointer;">
+                            <fa-icon [icon]="faAngleDoubleLeft"></fa-icon>
+                        </a>
+                    </li>
+                    <li class="page-item" *ngFor="let np of createRange(totalPaginas)"
+                        [ngClass]="{'active': paginaActual == np}">
+                        <span class="page-link" *ngIf="paginaActual == np">{{np}}</span>
+                        <a (click)="link(np)" class="page-link" *ngIf="paginaActual != np"
+                            style="cursor: pointer;">{{np}}</a>
+                    </li>
+                    <li class="page-item" [ngClass]="{'disabled': paginaActual == totalPaginas}">
+                        <span class="page-link" *ngIf="paginaActual == totalPaginas">
+                            <fa-icon [icon]="faAngleDoubleRight"></fa-icon>
+                        </span>
+                        <a class="page-link" (click)="link(nextPage())" *ngIf="paginaActual != totalPaginas"
+                            style="cursor: pointer;">
+                            <fa-icon [icon]="faAngleDoubleRight"></fa-icon>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div> 
+    </div>
+</div>
+
+<div id="print_f_html" *ngIf="cliente != null && pagoClienteLog != null" class="d-none">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-between mb-2">
+            <div class="col-4" *ngIf="cliente != null && cliente.logotipo != null && cliente.logotipo.length > 0">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img [src]="_dataurl+'img/logotipos-clientes/'+cliente.logotipo" [alt]="'Logotipo Cliente'"
+                            width="200px" class="img img-fluid">
+                    </div>
+                    <div class="col-12">
+                        <p><b>{{cliente.direccion}}</b></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <img [src]="_ruta+'assets/images/logotipos/logo6.png'" [alt]="'logotipo'" width="200px"
+                    class="img img-fluid">
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-6 mr-3">
+                <p>
+                    <b>Cliente:</b> {{cliente.nombre}} <br />
+                    <b>RNC:</b> {{pagoClienteLog[0].rnc}} <br />
+                    <b>NCF:</b> {{pagoClienteLog[0].ncf}} 
+                </p>
+            </div>
+            <div class="col-auto">
+                <p>
+                    <b>Factura #:</b> {{datos.facturaN}} <br />
+                    <b>Fecha:</b> {{datos.fecha | date:'yyyy-MM-dd'}}
+                </p>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group mt-4">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Detalle</th>
+                            <th>Pago</th>
+                            <th>Pago Ext.</th>
+                            <th>Pago Adc.</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{datos.detalle}}</td>
+                            <td>{{peso + ' ' + datos.pago | numberWithCommas}}</td>
+                            <td>{{peso + ' ' +datos.pagoExtraordinario | numberWithCommas}}</td>
+                            <td>{{peso + ' ' +datos.pagoAdicional | numberWithCommas}}</td>
+                            <td>{{peso + ' ' +datos.total | numberWithCommas}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between mt-4">
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>RECIBIDO POR</b></p>
+            </div>
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>ENTREGADO POR</b></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="print_f_html_inquilino" *ngIf="cuentasClienteP != null" class="d-none">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-between mb-2">
+            <div class="col-4"
+                *ngIf="cliente != null && cliente.logotipo != null && cliente.logotipo.length > 0">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img [src]="_dataurl+'img/logotipos-clientes/'+cliente.logotipo"
+                            [alt]="'Logotipo Cliente'" width="200px" class="img img-fluid">
+                    </div>
+                    <div class="col-12">
+                        <p><b>{{cliente.direccion}}</b></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <img [src]="_ruta+'assets/images/logotipos/logo6.png'" [alt]="'logotipo'" width="200px"
+                    class="img img-fluid">
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-6 mr-3">
+                <p>
+                    <b>Cliente:</b> {{datosInquilino.inquilino}} <br />
+                    <b>RNC:</b> {{datosInquilino.rnc}} <br />
+                    <b>NCF:</b> {{datosInquilino.ncf}}
+                </p>
+            </div>
+            <div class="col-auto">
+                <p>
+                    <b>Factura #:</b> {{datosInquilino.facturaN}} <br />
+                    <b>Fecha:</b> {{datosInquilino.fecha | date:'yyyy-MM-dd'}}
+                </p>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group mt-4">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Detalle</th>
+                            <th>Pago</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{datosInquilino.detalle}}</td>
+                            <td>{{peso + ' ' + datosInquilino.pago | numberWithCommas}}</td>
+                        </tr>  
+                    </tbody>          
+                </table>
+            </div>        
+        </div>
+        <div class="row no-gutters items-group d-flex justify-content-between mt-4">
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>RECIBIDO POR</b></p>
+            </div>
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>ENTREGADO POR</b></p>
+            </div>
+        </div>
+    </div>
+</div>

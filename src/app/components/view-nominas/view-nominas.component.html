@@ -1,0 +1,176 @@
+<div class="row view">
+    <div class="col-12 mt-3">
+        <form #buscarForm="ngForm" (ngSubmit)="onBuscar()">            
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Empleado:" [(ngModel)]="empleado"
+                    [ngbTypeahead]="searchEmpleado" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' (input)="onInputBuscar()" required />
+                <div class="input-group-append">
+                    <button class="btn btn-primary">
+                        <fa-icon [icon]="faSearch"></fa-icon>
+                    </button>                    
+                </div>                
+            </div>           
+        </form>
+    </div>
+    <div class="col-12 text-center" *ngIf="empleadosNominasP == null && dataSearchEmpty">
+        <h2 class="text-danger">No hay datos que coincidan con tu búsqueda...</h2>
+    </div>
+    <div class="col-12 text-center" *ngIf="empleadosNominasP == null && !dataSearchEmpty">
+        <img [src]="_ruta+'assets/images/resources/loading.gif'" [alt]="'Cargando....'" width="300px"
+            class="img img-fluid">
+    </div>
+    <div class="col-12 text-center" *ngIf="empleadosNominasP != null && empleadosNominasP.length == 0">
+        <h2 class="text-danger">No hay datos a mostrar...</h2>
+    </div>
+    <div class="col-12 my-4" *ngIf="empleadosNominasP != null && empleadosNominasP.length > 0">        
+        <div class="row" id="data_print">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-striped table-hover" id="data_table">
+                        <thead class="thead-dark">
+                            <tr>                    
+                                <th></th>                                
+                                <th>Empleado</th>
+                                <th>Cliente</th>
+                                <th>Carnet</th>
+                                <th>Sueldo</th>
+                                <th>Pocisión</th>
+                                <th>Pago</th>
+                                <th>TSS</th>
+                                <th>Detalle</th>
+                                <th>FechaPago</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of empleadosNominasP">
+                                <td class="p-2">
+                                    <img [src]="_dataurl+'img/fotos-empleados/'+data.foto" alt="Foto Empleado" class="img img-fluid" width="70px">
+                                </td>
+                                <td>{{data.empleado}}</td>
+                                <td>{{data.cliente}}</td>                                
+                                <td>{{data.carnet}}</td>
+                                <td>{{data.sueldo | numberWithCommas}}</td>
+                                <td>{{data.posicion}}</td>
+                                <td>{{data.pago | numberWithCommas}}</td>
+                                <td>{{data.tss | numberWithCommas}}</td>
+                                <td>{{data.detalle}}</td>
+                                <td>{{data.fecha_pago | date: 'yyyy-MM-dd'}}</td>                                
+                                <td class="d-flex justify-content-center" *ngIf="data.empleadoPagoID != null">
+                                    <button class="btn btn-outline-primary btn-sm mr-1" (click)="printRecibo(data.empleadoPagoID)">
+                                        <fa-icon [icon]="faPrint"></fa-icon>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" (click)="deletePago(data.empleadoPagoID)">
+                                        <fa-icon [icon]="faTrash"></fa-icon>
+                                    </button>
+                                </td>
+                            </tr>  
+                        </tbody>          
+                    </table>                    
+                </div>               
+            </div>            
+        </div>      
+    </div>
+    <div class="col-12" *ngIf="empleadosNominasP != null && empleado != null && empleadoID == empleado.id">
+        <div class="col-12 d-flex justify-content-center mt-3">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" [ngClass]="{'disabled': paginaActual == 1}">
+                        <span class="page-link" *ngIf="paginaActual == 1">
+                            <fa-icon [icon]="faAngleDoubleLeft"></fa-icon>
+                        </span>
+                        <a class="page-link" (click)="link(prevPage())" *ngIf="paginaActual != 1"
+                            style="cursor: pointer;">
+                            <fa-icon [icon]="faAngleDoubleLeft"></fa-icon>
+                        </a>
+                    </li>
+                    <li class="page-item" *ngFor="let np of createRange(totalPaginas)"
+                        [ngClass]="{'active': paginaActual == np}">
+                        <span class="page-link" *ngIf="paginaActual == np">{{np}}</span>
+                        <a (click)="link(np)" class="page-link" *ngIf="paginaActual != np"
+                            style="cursor: pointer;">{{np}}</a>
+                    </li>
+                    <li class="page-item" [ngClass]="{'disabled': paginaActual == totalPaginas}">
+                        <span class="page-link" *ngIf="paginaActual == totalPaginas">
+                            <fa-icon [icon]="faAngleDoubleRight"></fa-icon>
+                        </span>
+                        <a class="page-link" (click)="link(nextPage())" *ngIf="paginaActual != totalPaginas"
+                            style="cursor: pointer;">
+                            <fa-icon [icon]="faAngleDoubleRight"></fa-icon>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div> 
+    </div>
+</div>
+
+<div id="print_f_html" class="d-none">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-between mb-2">
+            <div class="col-4" *ngIf="datos.logotipo != null && datos.direccion != null">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img [src]="_dataurl+'img/logotipos-clientes/'+datos.logotipo" [alt]="'Logotipo Cliente'"
+                            width="200px" class="img img-fluid">
+                    </div>
+                    <div class="col-12">
+                        <p><b>{{datos.direccion}}</b></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <img [src]="_ruta+'assets/images/logotipos/logo6.png'" [alt]="'logotipo'" width="200px"
+                    class="img img-fluid">
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between">
+            <div class="col-6 mr-3">
+                <p>
+                    <b>Empleado:</b> {{datos.empleado}}
+                </p>
+            </div>
+            <div class="col-auto">
+                <p>
+                    <b>Fecha:</b> {{datos.fecha | date: 'yyyy-MM-dd'}}
+                </p>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group mt-4">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Detalle</th>
+                            <th>Pago</th>
+                            <th>TSS</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{datos.detalle}}</td>
+                            <td>{{datos.pago | numberWithCommas}}</td>
+                            <td>{{datos.tss | numberWithCommas}}</td>
+                            <td>{{datos.total | numberWithCommas}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row no-gutters items-group d-flex justify-content-between mt-4">
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>RECIBIDO POR</b></p>
+            </div>
+            <div class="col-auto text-center">
+                <p class="m-0">_____________________________________________</p>
+                <p class="m-0"><b>ENTREGADO POR</b></p>
+            </div>
+        </div>
+    </div>
+</div>

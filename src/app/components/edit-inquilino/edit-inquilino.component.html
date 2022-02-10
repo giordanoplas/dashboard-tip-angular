@@ -1,0 +1,66 @@
+<div class="row">
+    <div class="col">
+        <h3 class="text-primary mt-3 mb-3">Agregar Inquilino</h3>
+        <form #addForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group mt-3">
+                <label for="inquilinos">Buscar inquilino:</label>
+                <input type="text" class="form-control" placeholder="Inquilino:" [(ngModel)]="inquilino"
+                    [ngbTypeahead]="searchInquilino" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' required (change)="setDatos()" />
+            </div>
+            <hr>
+            <div *ngIf="inquilino != null && inquilino.id > 0">
+                <div class="form-group">
+                    <input type="text" name="nombre" placeholder="Nombre:" class="form-control" #nombre="ngModel"
+                        [(ngModel)]="datos.nombre" required>
+                    <small *ngIf="!nombre.valid && nombre.touched" class="text-danger">
+                        <b>Escribe un nombre válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="tel" name="telefono1" placeholder="Teléfono1:" class="form-control"
+                        #telefono1="ngModel" [(ngModel)]="datos.telefono1">
+                    <small *ngIf="!validarTelefono(datos.telefono1) && telefono1.touched" class="text-danger">
+                        <b>Escribe un teléfono válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="tel" name="telefono2" placeholder="Teléfono2:" class="form-control"
+                        #telefono2="ngModel" [(ngModel)]="datos.telefono2">
+                    <small *ngIf="!validarTelefono(datos.telefono2) && telefono2.touched" class="text-danger">
+                        <b>Escribe un teléfono válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="tel" name="telefono3" placeholder="Teléfono3:" class="form-control"
+                        #telefono3="ngModel" [(ngModel)]="datos.telefono3">
+                    <small *ngIf="!validarTelefono(datos.telefono3) && telefono3.touched" class="text-danger">
+                        <b>Escribe un teléfono válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="direccion" placeholder="Direccion:" class="form-control"
+                        #direccion="ngModel" [(ngModel)]="datos.direccion">
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email:" class="form-control" #email="ngModel"
+                        [(ngModel)]="datos.email">
+                    <small *ngIf="!validarEmail() && email.touched" class="text-danger">
+                        <b>Escribe un correo válido...</b>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="rnc" placeholder="RNC:" class="form-control"
+                        #rnc="ngModel" [(ngModel)]="datos.rnc">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="ncf" placeholder="NCF:" class="form-control"
+                        #ncf="ngModel" [(ngModel)]="datos.ncf">
+                </div>
+
+                <button class="btn btn-success mt-1 mb-5 w-100" type="submit"
+                    [disabled]="!addForm.valid">Modificar</button>
+            </div>
+        </form>
+    </div>
+</div>

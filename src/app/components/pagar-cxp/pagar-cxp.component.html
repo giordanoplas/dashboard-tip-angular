@@ -1,0 +1,47 @@
+<div class="row view">
+    <div class="col-12 mt-3">
+        <form #buscarForm="ngForm" (ngSubmit)="submitCliente()">            
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Cliente:" [(ngModel)]="cliente"
+                    [ngbTypeahead]="searchCliente" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' required />
+                <div class="input-group-append">
+                    <button class="btn btn-primary">
+                        <fa-icon [icon]="faSearch"></fa-icon>
+                    </button>                    
+                </div>                
+            </div>              
+        </form>
+    </div>
+    <div class="col-12 mt-1" *ngIf="cliente != null && cliente.id > 0 && lugares != null">
+        <form #lugaresForm="ngForm">
+            <div class="form-group">
+                <select name="lugar" class="form-control" #lugar="ngModel" [(ngModel)]="datos.lugarID">
+                    <option value="0">Selecciona un lugar...</option>
+                    <option *ngFor="let data of lugares" [value]="data.lugarID">{{data.nombre}}</option>     
+                </select>
+            </div>
+        </form>        
+    </div>    
+    <div class="col-12" *ngIf="cliente != null && lugares != null && datos.lugarID > 0">        
+        <form #facturarForm="ngForm" (ngSubmit)="onSubmit()">            
+            <hr>
+            <div class="form-group">
+                <input type="number" name="pago" placeholder="Pago:" class="form-control" #pago="ngModel"
+                    [(ngModel)]="datos.pago" required>
+                <small *ngIf="!pago.valid && pago.touched" class="text-danger">
+                    <b>Escribe un pago válido...</b>
+                </small>
+            </div>     
+            <div class="form-group">
+                <textarea name="descripcion" placeholder="Descripción:" class="form-control" #descripcion="ngModel"
+                    [(ngModel)]="datos.descripcion" required></textarea>
+                <small *ngIf="!descripcion.valid && descripcion.touched" class="text-danger">
+                    <b>Escribe una descripción válida...</b>
+                </small>
+            </div>                 
+            <button class="btn btn-primary mt-1 mb-5 w-100" type="submit"
+                [disabled]="!facturarForm.valid || datos.lugarID==0">Guardar</button>   
+        </form>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="row view">
+    <div class="col-12 mt-3" style="max-width: 450px;">
+        <form #buscarForm="ngForm" (ngSubmit)="onBuscar()">
+            <div class="input-group">            
+                <input type="text" name="nombre" class="form-control" placeholder="Nombre propiedad" #nombre="ngModel"
+                    [(ngModel)]="nombreSearch">
+                <div class="input-group-append">
+                    <button class="btn btn-primary">Buscar</button>
+                </div>            
+            </div>
+        </form>
+    </div>
+    <div class="row d-flex justify-content-center informacion mx-1 mt-3">   
+        <div class="col-12 text-center" *ngIf="propiedadesP == null && dataSearchEmpty">
+            <h2 class="text-danger">No hay propiedades que coincidan con tu búsqueda...</h2>
+        </div>
+        <div class="col-12 text-center" *ngIf="propiedadesP == null && !dataSearchEmpty">
+            <img [src]="_ruta+'assets/images/resources/loading.gif'" [alt]="'Cargando....'" width="300px" class="img img-fluid">            
+        </div>    
+        <div class="col-12 text-center" *ngIf="propiedadesP != null && propiedadesP.length == 0">
+            <h2 class="text-danger">No hay propiedades a mostrar...</h2>
+        </div>                
+        <div class="col-12" *ngIf="propiedadesP != null && propiedadesP.length > 0">
+            <div class="card-columns">
+                <div class="card" *ngFor="let pro of propiedadesP" [ngClass]="{'destacado': pro.destacado==1, 'vendido': pro.vendido==1, 'alquilado': pro.alquilado==1}">
+                    <span class="badge badge-primary m-2" *ngIf="pro.estadoOrden==1">{{pro.estado}}</span>
+                    <span class="badge badge-success m-2" *ngIf="pro.estadoOrden==2">{{pro.estado}}</span>
+                    <img [src]="_data+'img/'+pro.imagen" class="card-img-top img-fluid" [alt]="pro.nombre" *ngIf="pro.imagen != null">
+                    <img [src]="_ruta+'assets/images/resources/noimagen.png'" class="card-img-top img-fluid" [alt]="'No imagen'" *ngIf="pro.imagen == null">
+                    <div class="card-body">
+                        <h2 class="text-primary">{{pro.codigo}}</h2>
+                        <h3 class="card-title">{{pro.nombre}}</h3>
+                        <b>Precio:</b> <span class="precio ml-2">{{pro.moneda+numberWithCommas(pro.precio)}}</span>
+                        <p class="card-text mt-1">
+                            <fa-icon [icon]="faMapPin"></fa-icon> {{pro.direccion.substring(0,35)}}...
+                            <br/>
+                            <fa-icon [icon]="faCity"></fa-icon> {{pro.ubicacion}}
+                            <br/>
+                            <fa-icon [icon]="faBed"></fa-icon> {{pro.habitaciones}} Habitaciones
+                            <br/>
+                            <fa-icon [icon]="faToilet"></fa-icon> {{pro.banos}} Baños
+                            <br/>
+                            <fa-icon [icon]="faArrowsAlt"></fa-icon> {{pro.area+' '+pro.medida}}
+                        </p>
+                        <a (click)="goEditar(pro.codigo)" class="btn btn-primary">Editar</a>
+                        <button (click)="delete(pro.id)" class="btn btn-danger ml-1">Eliminar</button>
+                    </div>
+                </div>                        
+            </div>
+            <div class="col-12 d-flex justify-content-center mt-3">
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item" [ngClass]="{'disabled': paginaActual == 1}">
+                            <span class="page-link" *ngIf="paginaActual == 1">
+                                <fa-icon [icon]="faAngleDoubleLeft"></fa-icon>
+                            </span>
+                            <a class="page-link" (click)="link(prevPage())" *ngIf="paginaActual != 1" style="cursor: pointer;">
+                                <fa-icon [icon]="faAngleDoubleLeft"></fa-icon>
+                            </a>
+                        </li>
+                        <li class="page-item" *ngFor="let np of createRange(totalPaginas)" [ngClass]="{'active': paginaActual == np}">
+                            <span class="page-link" *ngIf="paginaActual == np">{{np}}</span>
+                            <a (click)="link(np)" class="page-link" *ngIf="paginaActual != np" style="cursor: pointer;">{{np}}</a>
+                        </li>   
+                        <li class="page-item" [ngClass]="{'disabled': paginaActual == totalPaginas}">
+                            <span class="page-link" *ngIf="paginaActual == totalPaginas">
+                                <fa-icon [icon]="faAngleDoubleRight"></fa-icon>
+                            </span>
+                            <a class="page-link" (click)="link(nextPage())" *ngIf="paginaActual != totalPaginas" style="cursor: pointer;">
+                                <fa-icon [icon]="faAngleDoubleRight"></fa-icon>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>

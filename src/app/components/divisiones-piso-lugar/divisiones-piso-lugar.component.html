@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col">
+        <h3 class="text-primary mt-3 mb-3">Admin de módulos</h3>
+        <form #addForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <input id="lugar" type="text" class="form-control" placeholder="Buscar Lugar:" [(ngModel)]="lugar"
+                    [ngbTypeahead]="searchLugar" [inputFormatter]="formatter" [resultFormatter]="formatter"
+                    [ngModelOptions]="{standalone: true}" [editable]='false' (change)="onChangeLugar()" required/>
+            </div>
+            <div class="form-group" *ngIf="lugar != null && lugar.id != 0 && modulosValue.length > 0">
+                <h6 class="text-primary"><b>Módulos por piso:</b></h6>                
+                <input type="number" *ngFor="let ran of createRangeLugar(lugar.id); let i = index" name="piso" [placeholder]="'Piso '+ran+':'" 
+                    class="form-control" [value]="modulosValue[i].cant_divisiones" required>
+            </div>
+            <div class="form-group" *ngIf="lugar != null && lugar.id != 0 && modulosValue.length == 0">
+                <h6 class="text-primary"><b>Módulos por piso:</b></h6>                
+                <input type="number" *ngFor="let ran of createRangeLugar(lugar.id); let i = index" name="piso" [placeholder]="'Piso '+ran+':'" 
+                    class="form-control" required>
+            </div>
+
+            <div class="form-group" *ngIf="lugar != null && lugar.id != 0">
+                <textarea name="descripcion" placeholder="Descripción:" class="form-control" #descripcion="ngModel"
+                    [(ngModel)]="datos.descripcion"></textarea>
+            </div>
+
+            <small class="text-danger" *ngIf="isError">
+                <b>{{errorMsn}}</b>
+            </small>
+            <hr>
+
+            <input type="submit" class="btn btn-primary" value="Guardar" 
+                [disabled]="!addForm.valid || lugar == null || lugar.id == 0">
+        </form>
+    </div>
+</div>

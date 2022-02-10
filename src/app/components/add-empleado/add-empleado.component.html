@@ -1,0 +1,59 @@
+<div class="row">
+    <div class="col">
+        <h3 class="text-primary mt-3 mb-3">Agregar Empleado</h3>
+        <form #addForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <input type="text" name="nombre" placeholder="Nombre:" class="form-control" #nombre="ngModel"
+                    [(ngModel)]="empleado.nombre" required>
+                <small *ngIf="!nombre.valid && nombre.touched" class="text-danger">
+                    <b>Escribe un nombre válido...</b>
+                </small>
+            </div>
+            <div class="form-group">
+                <input type="text" name="carnet" placeholder="Carnet:" class="form-control" #carnet="ngModel"
+                    [(ngModel)]="empleado.carnet" required>
+                <small *ngIf="!carnet.valid && carnet.touched" class="text-danger">
+                    <b>Escribe un nombre válido...</b>
+                </small>
+            </div>
+            <div class="form-group">
+                <input type="text" name="direccion" placeholder="Dirección:" class="form-control" #direccion="ngModel"
+                    [(ngModel)]="empleado.direccion">
+            </div>
+            <div class="form-group">
+                <input type="tel" name="telefono1" placeholder="Teléfono 1:" class="form-control" #telefono1="ngModel"
+                    [(ngModel)]="empleado.telefono1">
+                <small *ngIf="!validarTelefono(empleado.telefono1) && telefono1.touched" class="text-danger">
+                    <b>Escribe un teléfono válido...</b>
+                </small>
+            </div>
+            <div class="form-group">
+                <input type="tel" name="telefono2" placeholder="Teléfono 2:" class="form-control" #telefono2="ngModel"
+                    [(ngModel)]="empleado.telefono2">
+                <small *ngIf="!validarTelefono(empleado.telefono2) && telefono2.touched" class="text-danger">
+                    <b>Escribe un teléfono válido...</b>
+                </small>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email:" class="form-control" #email="ngModel"
+                    [(ngModel)]="empleado.email">
+                <small *ngIf="!validarEmail() && email.touched" class="text-danger">
+                    <b>Escribe un correo válido...</b>
+                </small>
+            </div>
+            <div class="form-group">
+                <input type="text" name="descripcion" placeholder="Descripción:" class="form-control"
+                    #descripcion="ngModel" [(ngModel)]="empleado.descripcion">
+            </div>
+
+            <div class="my-3" *ngIf="empleado.nombre.length > 0">
+                <h4 class="text-primary">Cargar Foto:</h4>
+                <angular-file-uploader [config]="afuConfigImages" (ApiResponse)="imageUpload($event)">
+                </angular-file-uploader>
+                <hr>
+            </div>
+
+            <button class="btn btn-primary mt-1 mb-5 w-100" type="submit" [disabled]="!addForm.valid">Guardar</button>
+        </form>
+    </div>
+</div>
